@@ -22,7 +22,6 @@ export interface DpcFactorProvenance {
   source?: string | null;
   geography?: string | null;
   referenceYear?: number | null;
-  dataQuality?: DpcConfidence;
 }
 
 export interface DpcOnPremiseInput {
