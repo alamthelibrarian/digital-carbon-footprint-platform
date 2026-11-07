@@ -501,3 +501,19 @@ test("Rejects blank evidence descriptions and source fields", () => {
     }],
   }), /source must be a non-empty string/);
 });
+
+
+test("Rejects numeric strings in website calculation inputs", () => {
+  assert.throws(() => calculateWebsiteUse({
+    averagePageSizeKB: "100",
+    annualVisits: 1000,
+    averageDownloadSizeMB: 0,
+    annualDownloads: 0,
+    fixedLineIntensityKWhPerGB: 0.01,
+    mobileIntensityKWhPerGB: 0.02,
+    fixedLineIntensitySource: "Test source",
+    mobileIntensitySource: "Test source",
+    meanGlobalGridFactorKgCO2ePerKWh: 0.4,
+    gridFactorSource: "Test source",
+  }), /finite, non-negative number/);
+});
