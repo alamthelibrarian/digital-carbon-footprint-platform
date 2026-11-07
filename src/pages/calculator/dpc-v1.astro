@@ -24,7 +24,7 @@
           <div class="panel-head"><div><p class="eyebrow">01 / INFRASTRUCTURE</p><h2>On-premise equipment</h2></div><label class="toggle"><input type="checkbox" name="onEnabled" checked /> Include</label></div>
           <div class="fields">
             <label>Activity category<select name="onCategory"><option value="acquisition-transfer-ingest">Acquisition, transfer & ingest</option><option value="bitstream-preservation">Bitstream preservation</option><option value="content-preservation">Content preservation</option><option value="metadata-management">Metadata management</option><option value="discovery-access">Discovery & access</option></select></label>
-            <label>Machine / equipment name<input name="machineName" required value="Example server" /></label>
+            <label>Machine / equipment name<input name="machineName" value="Example server" /></label>
             <label>Idle power (W)<input name="idlePowerW" type="number" min="0" step="any" value="100" /></label>
             <label>Maximum power (W)<input name="maxPowerW" type="number" min="0" step="any" value="200" /></label>
             <label>Mean utilisation (0–1)<input name="meanUtilisation" type="number" min="0" max="1" step="any" value="0.5" /></label>
@@ -32,8 +32,8 @@
             <label>Storage intensity (Wh/TB/hour)<input name="storageEnergyWhPerTBh" type="number" min="0" step="any" value="0.5" /></label>
             <label>PUE<input name="pue" type="number" min="0.000001" step="any" value="1.5" /></label>
             <label>Grid factor (kgCO₂e/kWh)<input name="gridFactorKgCO2ePerKWh" type="number" min="0" step="any" value="0.45" /></label>
-            <label>Grid factor source<input name="gridFactorSource" required value="Example source — replace with your source" /></label>
-            <label>Activity data source<input name="onSource" required value="Example measurements — replace with your source" /></label>
+            <label>Grid factor source<input name="gridFactorSource" value="Example source — replace with your source" /></label>
+            <label>Activity data source<input name="onSource" value="Example measurements — replace with your source" /></label>
             <label>Data confidence<select name="onConfidence"><option value="high">High</option><option value="medium" selected>Medium</option><option value="low">Low</option></select></label>
           </div>
         </section>
