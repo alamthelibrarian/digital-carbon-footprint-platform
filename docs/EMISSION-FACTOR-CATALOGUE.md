@@ -15,7 +15,7 @@ A factor is usable by an engine only when the engine's method identifier is expl
 | `id` | Stable identifier within the catalogue | Required; unique within one catalogue |
 | `name` | Human-readable factor name | Required |
 | `category` | Factor category, such as grid electricity or network energy intensity | Required; category vocabulary is method/domain governed |
-| `value` | Numeric factor value | Required; finite and non-negative |
+| `value` | Numeric factor value | Required; finite and non-negative; a value of zero requires an explanatory evidence/rationale note |
 | `unit` | Explicit denominator/numerator unit | Required; do not infer or silently convert |
 | `source.name` | Publisher or dataset/source title | Required |
 | `source.publisher` | Publishing organisation | Optional |
@@ -28,7 +28,7 @@ A factor is usable by an engine only when the engine's method identifier is expl
 | `dataQuality` | Qualitative data-quality rating | Optional: `high`, `medium`, or `low` |
 | `applicableMethods` | Explicit method identifiers | Required; at least one |
 | `license` | Licence or reuse terms | Optional in the type; required before redistribution where licensing applies |
-| `notes` | Context, caveats, or transformation details | Optional |
+| `notes` | Context, caveats, or transformation details | Optional generally; required to explain and evidence a zero factor value |
 
 ## Data kind and quality
 
@@ -37,7 +37,7 @@ A factor is usable by an engine only when the engine's method identifier is expl
 - **Secondary literature:** taken from a publication or compiled dataset rather than measured by this project.
 - **Proxy:** substituted for a missing or unavailable value. Explain why it is appropriate and identify the original proxy source.
 
-Data kind describes origin; data quality describes confidence in its suitability and completeness. They are not interchangeable.
+Data kind describes origin; data quality describes confidence in its suitability and completeness. They are not interchangeable. A measured or provider-reported value is not automatically high quality, and a proxy is not automatically low quality: rate quality from documented suitability, representativeness, completeness, and uncertainty rather than from the data-kind label alone.
 
 ## Geography and reference period
 
@@ -63,9 +63,9 @@ The catalogue contract does not grant rights to third-party datasets, standards,
 
 ## Validation currently implemented
 
-`validateEmissionFactorRecord(input)` and `validateEmissionFactorCatalogue(records)` currently validate required identity/value/unit fields, source name and optional URL/year, data kind, optional quality, explicit method identifiers, optional geography, optional reference period, and duplicate IDs.
+`validateEmissionFactorRecord(input)` and `validateEmissionFactorCatalogue(records)` currently validate required identity/value/unit fields, source name and optional URL/year, data kind, optional quality, explicit method identifiers, optional geography, optional reference period, duplicate IDs, and an explanatory note whenever a factor value is zero. Custom factor identifiers remain allowed; method-specific engines are responsible for interpreting their own identifiers.
 
-Validation is structural, not scientific. It does not verify source authenticity, factor correctness, unit compatibility with an engine, methodological suitability, geographic representativeness, licensing, or data-quality ratings. Those checks require review and method-specific validation.
+A missing factor must remain absent or unresolved; it must not be encoded as a zero-valued factor. Zero is accepted only when its source and explanatory note support a genuine zero for the stated boundary and period. Validation is structural, not scientific. It does not verify source authenticity, factor correctness, unit compatibility with an engine, methodological suitability, geographic representativeness, licensing, or data-quality ratings. Those checks require review and method-specific validation.
 
 ## Example record
 
