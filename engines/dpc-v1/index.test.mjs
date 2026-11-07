@@ -209,3 +209,63 @@ test("Rejects invalid confidence values", () => {
     }],
   }), /confidence must be high, medium, or low/);
 });
+
+
+test("Preserves factor provenance metadata without changing calculated emissions", () => {
+  const onPremiseProvenance = {
+    factor: "electricity-grid",
+    value: 0.4,
+    unit: "kgCO2e/kWh",
+    source: "National grid dataset",
+    geography: "Example country",
+    referenceYear: 2025,
+    dataQuality: "medium",
+  };
+  const networkProvenance = [
+    { factor: "electricity-grid", value: 0.4, unit: "kgCO2e/kWh", source: "Grid dataset", geography: "Example country", referenceYear: 2025 },
+    { factor: "network-energy-intensity", value: 0.0065, unit: "kWh/GB", source: "Peer-reviewed study", referenceYear: 2024 },
+  ];
+  const onPremise = calculateOnPremiseRow({
+    category: "bitstream-preservation", machineName: "Server", idlePowerW: 100,
+    maxPowerW: 200, meanUtilisation: 0.5, storageCapacityTB: 10,
+    storageEnergyWhPerTBh: 0.5, pue: 1.5, gridFactorKgCO2ePerKWh: 0.4,
+    gridFactorSource: "National grid dataset", source: "Meter readings",
+    confidence: "medium", factorProvenance: onPremiseProvenance,
+  });
+  assert.deepEqual(onPremise.factorProvenance, onPremiseProvenance);
+  assert.ok(Math.abs(onPremise.emissionsKgCO2e - 814.68) < 1e-9);
+
+  const networking = calculateNetworkingRow({
+    category: "acquisition-transfer-ingest", activityName: "Transfer",
+    transmittedMBPerDay: 1000, receivedMBPerDay: 500,
+    networkEnergyIntensityKWhPerGB: 0.0065, gridFactorKgCO2ePerKWh: 0.4,
+    gridFactorSource: "Grid dataset", source: "Transfer logs",
+    confidence: "medium", factorProvenance: networkProvenance,
+  });
+  assert.deepEqual(networking.factorProvenance, networkProvenance);
+
+  const websiteProvenance = [
+    { factor: "fixed-line-network-intensity", value: 0.0065, unit: "kWh/GB", source: "Study A", referenceYear: 2024 },
+    { factor: "mobile-network-intensity", value: 0.1, unit: "kWh/GB", source: "Study B", referenceYear: 2024 },
+    { factor: "mean-global-grid", value: 0.4, unit: "kgCO2e/kWh", source: "Grid dataset", geography: "Global", referenceYear: 2025 },
+  ];
+  const website = calculateWebsiteUse({
+    averagePageSizeKB: 100, annualVisits: 10000, averageDownloadSizeMB: 5,
+    annualDownloads: 1000, fixedLineIntensityKWhPerGB: 0.0065,
+    mobileIntensityKWhPerGB: 0.1, fixedLineIntensitySource: "Study A",
+    mobileIntensitySource: "Study B", meanGlobalGridFactorKgCO2ePerKWh: 0.4,
+    gridFactorSource: "Grid dataset", factorProvenance: websiteProvenance,
+  });
+  assert.deepEqual(website.factorProvenance, websiteProvenance);
+  assert.ok(Math.abs(website.emissionsKgCO2e - 0.1278) < 1e-12);
+
+  const travelProvenance = {
+    factor: "travel-emissions-calculation", unit: "kgCO2e/trip",
+    source: "Travel calculator", geography: "Example country", referenceYear: 2025,
+  };
+  const travel = calculateTravelRow({
+    description: "Trip", emissionsKgCO2e: 12, source: "Travel calculator",
+    factorProvenance: travelProvenance,
+  });
+  assert.deepEqual(travel.factorProvenance, travelProvenance);
+});
