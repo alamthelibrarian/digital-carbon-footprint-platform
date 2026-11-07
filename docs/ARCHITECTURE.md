@@ -11,6 +11,10 @@ DCFP is a method-aware platform for digital carbon footprint assessment. It sepa
 3. **Calculation engines:** isolated, versioned implementations for each methodology.
 4. **Reference data:** emission factors and supporting datasets with source, geography, period, unit, and quality metadata.
 
+## Method registry
+
+The initial registry is maintained in `src/lib/methods.ts`. Each entry separates its route slug from a stable method identifier and records its implementation state. The DPC v1.0 registry identifier matches the identifier returned by its calculation engine and used for emission-factor applicability. Registry entries for planned methods do not imply that those engines exist.
+
 ## Engine boundary
 
 Every engine must declare its method identifier, version, supported scope, required inputs, functional unit, and limitations. It must return a result that identifies the exact method version used.
