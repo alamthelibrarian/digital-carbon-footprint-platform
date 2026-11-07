@@ -23,7 +23,8 @@ The roadmap is directional. A method is not considered implemented until its cal
 - [x] Define the method-aware emission-factor provenance catalogue contract and structural validation
 - [ ] Add method-specific input validation and data-quality reporting across engines
 - [ ] Result persistence and reproducible platform-level exports
-- [ ] Adapt method-specific results to the shared result envelope through explicit adapters
+- [x] Implement the DPC v1.0 adapter to the shared result envelope
+- [ ] Implement adapters for additional methods
 
 ## Phase 3 — Additional methods
 
