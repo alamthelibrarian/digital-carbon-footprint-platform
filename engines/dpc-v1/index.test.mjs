@@ -97,7 +97,10 @@ test("Aggregate includes all workbook categories and cloud totals", () => {
       annualDownloads: 1000,
       fixedLineIntensityKWhPerGB: 0.0065,
       mobileIntensityKWhPerGB: 0.1,
+      fixedLineIntensitySource: "DPC Datasheet default",
+      mobileIntensitySource: "DPC Datasheet default",
       meanGlobalGridFactorKgCO2ePerKWh: 0.45,
+      gridFactorSource: "DPC Datasheet default",
     },
     travel: [{ description: "Travel", emissionsKgCO2e: 20, source: "External calculator" }],
   });
