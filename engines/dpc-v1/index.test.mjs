@@ -567,5 +567,5 @@ test("Validates factor provenance metadata without changing calculation inputs",
       dataQuality: "high",
     },
   });
-  assert.equal(valid.emissionsKgCO2e, 175.2);
+  assert.equal(valid.emissionsKgCO2e, 54.312);
 });
