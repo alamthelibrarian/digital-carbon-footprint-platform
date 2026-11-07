@@ -10,6 +10,11 @@ import type {
   DpcConfidence,
   DpcFactorProvenance,
 } from "./index.ts";
+import type {
+  DcfpMetric,
+  DcfpFactorProvenanceEntry,
+  DcfpResultEnvelope,
+} from "../../src/lib/result-contract.ts";
 
 export interface DpcAssessmentMetadata {
   id: string;
@@ -22,57 +27,11 @@ export interface DpcAssessmentMetadata {
   geography?: string;
 }
 
-export interface DcfpMetric {
-  id: string;
-  label: string;
-  value: number;
-  unit: "kgCO2e";
-  context?: string;
-}
-
-export interface DcfpFactorProvenanceEntry {
-  location: string;
-  provenance: DpcFactorProvenance;
-}
-
-export interface DcfpDpcResultEnvelope {
-  schemaVersion: "1.0";
-  assessment: {
-    id: string;
-    createdAt: string;
-    title?: string;
-  };
-  method: {
-    id: "dpc-carbon-footprint-toolkit";
-    version: "1.0";
-    name: "DPC Carbon Footprint Toolkit";
-  };
-  scope: {
-    subject: string;
-    systemBoundary: string;
-    functionalUnit: string;
-    reportingPeriod: string;
-    referencePeriod: "1 year";
-    geography?: string;
-  };
-  inputs: DpcCalculationInput;
-  results: {
-    native: DpcCalculationResult;
-    metrics: DcfpMetric[];
-  };
-  factorProvenance: DcfpFactorProvenanceEntry[];
-  dataQuality: {
-    activityConfidence: DpcConfidence[];
-    factorProvenanceCoverage: "none" | "partial" | "recorded";
-  };
-  assumptions: string[];
-  limitations: string[];
-  traceability: {
-    engine: "dpc-v1-typescript";
-    engineVersion: "0.1.0";
-    calculationTimestamp: string;
-  };
-}
+export type DcfpDpcResultEnvelope = DcfpResultEnvelope<
+  DpcCalculationInput,
+  DpcCalculationResult,
+  DpcFactorProvenance
+>;
 
 const validText = (value: unknown): value is string =>
   typeof value === "string" && value.trim().length > 0;
@@ -110,7 +69,7 @@ export function adaptDpcV1Result(
     throw new TypeError("result must be produced by DPC Carbon Footprint Toolkit v1.0.");
   }
 
-  const factorProvenance: DcfpFactorProvenanceEntry[] = [];
+  const factorProvenance: DcfpFactorProvenanceEntry<DpcFactorProvenance>[] = [];
   let coveredProvenanceSlots = 0;
   const add = (location: string, value?: DpcFactorProvenance | DpcFactorProvenance[]) => {
     if (Array.isArray(value) && value.length > 0) {
