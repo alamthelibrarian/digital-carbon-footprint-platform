@@ -111,11 +111,17 @@ export function adaptDpcV1Result(
   }
 
   const factorProvenance: DcfpFactorProvenanceEntry[] = [];
+  let coveredProvenanceSlots = 0;
   const add = (location: string, value?: DpcFactorProvenance | DpcFactorProvenance[]) => {
-    if (Array.isArray(value)) value.forEach((item, index) => factorProvenance.push({
-      location: `${location}[${index}]`, provenance: item,
-    }));
-    else if (value) factorProvenance.push({ location, provenance: value });
+    if (Array.isArray(value) && value.length > 0) {
+      coveredProvenanceSlots += 1;
+      value.forEach((item, index) => factorProvenance.push({
+        location: `${location}[${index}]`, provenance: item,
+      }));
+    } else if (value) {
+      coveredProvenanceSlots += 1;
+      factorProvenance.push({ location, provenance: value });
+    }
   };
 
   result.onPremise.forEach((row, index) => add(`onPremise[${index}]`, row.factorProvenance));
@@ -131,9 +137,9 @@ export function adaptDpcV1Result(
   ];
   const expectedProvenanceSlots = result.onPremise.length + result.cloud.length
     + result.networking.length + (result.websiteUse ? 1 : 0) + result.travel.length;
-  const factorProvenanceCoverage = factorProvenance.length === 0
+  const factorProvenanceCoverage = coveredProvenanceSlots === 0
     ? "none"
-    : factorProvenance.length >= expectedProvenanceSlots ? "recorded" : "partial";
+    : coveredProvenanceSlots >= expectedProvenanceSlots ? "recorded" : "partial";
 
   const totals = result.totals;
   const metrics: DcfpMetric[] = [
@@ -166,7 +172,7 @@ export function adaptDpcV1Result(
       referencePeriod: result.referencePeriod,
       ...(metadata.geography ? { geography: metadata.geography } : {}),
     },
-    inputs,
+    inputs: input,
     results: { native: result, metrics },
     factorProvenance,
     dataQuality: {
