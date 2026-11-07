@@ -23,7 +23,7 @@ The shared platform must not rewrite, blend, or silently harmonize method-specif
 
 ## Shared result envelope and adapters
 
-The platform-level result envelope is defined in `docs/RESULT-CONTRACT.md`. Each calculation engine retains its native output and exposes a separate adapter into that envelope. The adapter may map and label outputs but must not recalculate, reinterpret, or harmonize method-specific values. The initial DPC adapter lives in `engines/dpc-v1/result-adapter.ts`.
+The method-neutral TypeScript envelope is defined in `src/lib/result-contract.ts` and specified in `docs/RESULT-CONTRACT.md`. Each calculation engine retains its native output and exposes a separate adapter into that envelope. The adapter may map and label outputs but must not recalculate, reinterpret, or harmonize method-specific values. The initial DPC adapter lives in `engines/dpc-v1/result-adapter.ts`.
 
 ## Result provenance
 
