@@ -341,8 +341,8 @@
           p.factor,
           p.value !== undefined ? `${p.value} ${p.unit}` : p.unit,
           p.source ? `Source: ${p.source}` : "Source: not recorded",
-          p.geography ? `Geography: ${p.geography}` : null,
-          p.referenceYear ? `Reference year: ${p.referenceYear}` : null,
+          `Geography: ${p.geography || "not recorded"}`,
+          `Reference year: ${p.referenceYear ?? "not recorded"}`,
         ].filter(Boolean).join(" · ");
         item.append(location, source); return item;
       }));
