@@ -22,7 +22,7 @@ import { methods } from "../lib/methods";
       <section class="methods">
         <div class="section-head"><div><p class="eyebrow">METHOD LIBRARY</p><h2>Calculation methods</h2></div><a class="count" href="/methods/">VIEW ALL METHODS ↗</a></div>
         <div class="method-list">
-          {methods.map((method, i) => <article class="method"><span class="number">0{i + 1}</span><div><h3><a href={`/methods/${method.slug}/`}>{method.name}</a></h3><p>{method.summary}</p></div><span class:list={["tag", i === 0 && "listed"]}>{method.statusLabel}</span></article>)}
+          {methods.map((method, i) => <article class="method"><span class="number">0{i + 1}</span><div><h3><a href={`/methods/${method.slug}/`}>{method.name}</a></h3><p>{method.summary}</p></div><span class="tag">{method.statusLabel}</span></article>)}
         </div>
       </section>
       <footer><p>Independent software implementation. The initial method is based on the Digital Preservation Coalition (DPC) Carbon Footprint Toolkit v1.0; this project is not an official DPC product or endorsed by DPC.</p><a href="https://doi.org/10.7207/carbonfootprinttoolkit26-01">DPC source publication ↗</a></footer>
