@@ -39,6 +39,7 @@ Results from different methodologies are not automatically comparable. Any compa
 - [Methodology and attribution](./docs/METHODOLOGY.md)
 - [Emission factor catalogue specification](./docs/EMISSION-FACTOR-CATALOGUE.md)
 - [Calculation result contract](./docs/RESULT-CONTRACT.md)
+- [DPC v1.0 result adapter](./engines/dpc-v1/result-adapter.ts)
 - [Development roadmap](./docs/ROADMAP.md)
 
 The result contract is a proposed platform-level target. The current DPC engine remains method-specific and has not yet been adapted to that shared envelope.
