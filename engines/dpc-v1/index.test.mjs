@@ -544,6 +544,10 @@ test("Validates factor provenance metadata without changing calculation inputs",
   }), /factorProvenance.unit must be a non-empty string/);
   assert.throws(() => calculateOnPremiseRow({
     ...base,
+    factorProvenance: { factor: "electricity-grid", unit: "kWh/GB", source: "Dataset" },
+  }), /factorProvenance.unit for electricity-grid must be kgCO2e\/kWh/);
+  assert.throws(() => calculateOnPremiseRow({
+    ...base,
     factorProvenance: { factor: "grid", unit: "kgCO2e/kWh", value: Number.NaN, source: "Dataset" },
   }), /factorProvenance.value must be a finite, non-negative number/);
   assert.throws(() => calculateOnPremiseRow({
