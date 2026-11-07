@@ -269,3 +269,93 @@ test("Preserves factor provenance metadata without changing calculated emissions
   });
   assert.deepEqual(travel.factorProvenance, travelProvenance);
 });
+
+
+test("All five DPC activity categories retain multiple rows and aggregate correctly", () => {
+  const categories = [
+    "acquisition-transfer-ingest",
+    "bitstream-preservation",
+    "content-preservation",
+    "metadata-management",
+    "discovery-access",
+  ];
+  const onPremise = categories.flatMap((category) => [1, 2].map((index) => ({
+    category,
+    machineName: `Server ${index}`,
+    idlePowerW: 100,
+    maxPowerW: 100,
+    meanUtilisation: 0,
+    storageCapacityTB: 0,
+    storageEnergyWhPerTBh: 0,
+    pue: 1,
+    gridFactorKgCO2ePerKWh: 0.5,
+    gridFactorSource: "Synthetic test factor",
+    source: "Synthetic test activity data",
+    confidence: "high",
+  })));
+  const networking = categories.flatMap((category) => [1, 2].map((index) => ({
+    category,
+    activityName: `Network activity ${index}`,
+    transmittedMBPerDay: 1000,
+    receivedMBPerDay: 0,
+    networkEnergyIntensityKWhPerGB: 0.01,
+    gridFactorKgCO2ePerKWh: 0.5,
+    gridFactorSource: "Synthetic test factor",
+    source: "Synthetic test activity data",
+    confidence: "high",
+  })));
+
+  const result = calculateDpcV1({
+    onPremise,
+    networking,
+    cloud: [
+      { category: "data-centres-servers", serviceName: "Cloud compute", annualEmissionsKgCO2e: 2, source: "Provider report", confidence: "high" },
+      { category: "networking", serviceName: "Cloud transfer", annualEmissionsKgCO2e: 3, source: "Provider report", confidence: "high" },
+    ],
+    websiteUse: {
+      averagePageSizeKB: 0,
+      annualVisits: 0,
+      averageDownloadSizeMB: 0,
+      annualDownloads: 0,
+      fixedLineIntensityKWhPerGB: 0,
+      mobileIntensityKWhPerGB: 0,
+      fixedLineIntensitySource: "Synthetic test assumption",
+      mobileIntensitySource: "Synthetic test assumption",
+      meanGlobalGridFactorKgCO2ePerKWh: 0,
+      gridFactorSource: "Synthetic test factor",
+    },
+    travel: [{ description: "No travel", emissionsKgCO2e: 0, source: "Synthetic test record" }],
+  });
+
+  assert.equal(result.onPremise.length, 10);
+  assert.equal(result.networking.length, 10);
+  for (const category of categories) {
+    assert.equal(result.onPremise.filter((row) => row.category === category).length, 2);
+    assert.equal(result.networking.filter((row) => row.category === category).length, 2);
+  }
+  assert.ok(Math.abs(result.totals.onPremiseKgCO2e - 4380) < 1e-9);
+  assert.ok(Math.abs(result.totals.networkingOnPremiseKgCO2e - (20 * (365 / 12) * 0.01 * 0.5)) < 1e-12);
+  assert.equal(result.totals.cloudDataCentresServersKgCO2e, 2);
+  assert.equal(result.totals.cloudNetworkingKgCO2e, 3);
+  assert.equal(result.totals.websiteUseKgCO2e, 0);
+  assert.equal(result.totals.travelKgCO2e, 0);
+  assert.ok(Math.abs(result.totals.totalKgCO2e - (4380 + (20 * (365 / 12) * 0.01 * 0.5) + 5)) < 1e-9);
+});
+
+test("Empty assessment returns zero totals without inventing activity rows", () => {
+  const result = calculateDpcV1({});
+  assert.deepEqual(result.onPremise, []);
+  assert.deepEqual(result.cloud, []);
+  assert.deepEqual(result.networking, []);
+  assert.equal(result.websiteUse, null);
+  assert.deepEqual(result.travel, []);
+  assert.deepEqual(result.totals, {
+    onPremiseKgCO2e: 0,
+    cloudDataCentresServersKgCO2e: 0,
+    cloudNetworkingKgCO2e: 0,
+    networkingOnPremiseKgCO2e: 0,
+    websiteUseKgCO2e: 0,
+    travelKgCO2e: 0,
+    totalKgCO2e: 0,
+  });
+});
