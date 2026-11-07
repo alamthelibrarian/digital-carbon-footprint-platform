@@ -1,4 +1,4 @@
-export type MethodStatus = "planned" | "under-evaluation";
+export type MethodStatus = "in-development" | "planned" | "under-evaluation";
 
 export interface MethodDefinition {
   slug: string;
@@ -17,13 +17,13 @@ export const methods: MethodDefinition[] = [
   {
     slug: "dpc-v1",
     name: "DPC Carbon Footprint Toolkit v1.0",
-    status: "planned",
-    statusLabel: "Initial implementation target",
+    status: "in-development",
+    statusLabel: "Under development · not validated",
     summary: "A method for estimating the carbon footprint associated with digital preservation activities.",
     role: "The first calculation engine planned for DCFP. Its implementation will be based on the published DPC toolkit, with source attribution and documented interpretation.",
     source: "Digital Preservation Coalition. (2026). Carbon Footprint Toolkit.",
     sourceUrl: "https://doi.org/10.7207/carbonfootprinttoolkit26-01",
-    implementationNote: "Not implemented yet. Formula mapping, input definitions, emission-factor provenance, and regression tests must be completed before this method can be presented as usable.",
+    implementationNote: "An early TypeScript calculation engine and initial tests exist. It is not yet validated against Excel-calculated outputs and must not be used for production or formal reporting.",
     scope: ["Digital preservation activities", "Activity data and energy-related estimates", "Transparent assumptions and source references"],
   },
   {
