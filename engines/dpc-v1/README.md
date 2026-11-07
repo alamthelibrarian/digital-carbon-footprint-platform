@@ -19,7 +19,7 @@ The implementation does not include or redistribute the original DPC workbook, i
 
 ## Web calculator
 
-The Astro interface at `/calculator/dpc-v1/` consumes this engine directly. Each activity group can be included or excluded. The interface displays the annual total, category breakdown, and calculation details, and supports printing the result. Example values are prefilled for demonstration and must be replaced with evidence-based inputs. The interface does not save calculations on a server. It supports a user-initiated JSON download containing assessment metadata, submitted inputs, calculation outputs, and limitations. The JSON file is a portable record, not a validated reporting template.
+The Astro interface at `/calculator/dpc-v1/` consumes this engine directly. Each activity group can be included or excluded. The interface displays the annual total, category breakdown, and calculation details, and supports printing the result. The form starts without prefilled activity or emission-factor values; users must enter evidence-based inputs before calculating. The interface does not save calculations on a server. It supports a user-initiated JSON download containing assessment metadata, submitted inputs, calculation outputs, and limitations. The JSON file is a portable record, not a validated reporting template.
 
 
 
@@ -34,7 +34,7 @@ The web calculator records provenance alongside the submitted inputs in its down
 ## Validation still required
 
 - Regression comparison against Excel-calculated workbook outputs.
-- Complete coverage of empty rows, zero values, invalid units, missing inputs, and edge cases.
+- Complete coverage of empty rows, zero values, invalid units, missing inputs, and edge cases. Current tests cover empty assessments, zero-valued activity inputs, multiple activity rows, and rejection of non-finite derived results caused by numeric overflow.
 - Verification of every formula and category mapping against the authoritative publication/workbook.
 - Review of factor provenance, geography, reference periods, and reuse rights.
 - Review by an independent domain expert before any claim of validation.
