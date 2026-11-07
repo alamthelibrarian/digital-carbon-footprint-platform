@@ -2,6 +2,8 @@ export type MethodStatus = "in-development" | "planned" | "under-evaluation";
 
 export interface MethodDefinition {
   slug: string;
+  methodId: string;
+  version?: string;
   name: string;
   status: MethodStatus;
   statusLabel: string;
@@ -16,6 +18,8 @@ export interface MethodDefinition {
 export const methods: MethodDefinition[] = [
   {
     slug: "dpc-v1",
+    methodId: "dpc-carbon-footprint-toolkit",
+    version: "1.0",
     name: "DPC Carbon Footprint Toolkit v1.0",
     status: "in-development",
     statusLabel: "Under development · not validated",
@@ -23,11 +27,12 @@ export const methods: MethodDefinition[] = [
     role: "The first calculation engine under development for DCFP. The independent implementation is based on the published DPC toolkit, with source attribution and documented interpretation.",
     source: "Digital Preservation Coalition. (2026). Carbon Footprint Toolkit.",
     sourceUrl: "https://doi.org/10.7207/carbonfootprinttoolkit26-01",
-    implementationNote: "An early TypeScript calculation engine and initial tests exist. It is not yet validated against Excel-calculated outputs and must not be used for production or formal reporting.",
+    implementationNote: "A TypeScript calculation engine, unit tests, and a synthetic regression fixture recalculated with LibreOffice exist. Independent Microsoft Excel comparison and methodological review remain outstanding; this is not a validated reporting tool.",
     scope: ["Digital preservation activities", "Activity data and energy-related estimates", "Transparent assumptions and source references"],
   },
   {
     slug: "sci",
+    methodId: "sci",
     name: "Software Carbon Intensity (SCI)",
     status: "planned",
     statusLabel: "Research roadmap",
@@ -40,6 +45,7 @@ export const methods: MethodDefinition[] = [
   },
   {
     slug: "ghg-protocol",
+    methodId: "ghg-protocol",
     name: "GHG Protocol",
     status: "under-evaluation",
     statusLabel: "Framework evaluation",
@@ -52,6 +58,7 @@ export const methods: MethodDefinition[] = [
   },
   {
     slug: "itu-l1410",
+    methodId: "itu-t-l1410",
     name: "ITU-T L.1410 / Life-cycle assessment",
     status: "planned",
     statusLabel: "Research roadmap",
