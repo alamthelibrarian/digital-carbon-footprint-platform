@@ -143,6 +143,7 @@
 <script>
   import { calculateDpcV1 } from "../../../engines/dpc-v1/index";
   import { adaptDpcV1Result } from "../../../engines/dpc-v1/result-adapter";
+  import { buildDpcV1ReportBreakdown } from "../../../engines/dpc-v1/report-view";
 
   const form = document.querySelector<HTMLFormElement>("#calculator")!;
   const results = document.querySelector<HTMLElement>("#results")!;
@@ -279,7 +280,8 @@
         reportingPeriod: value("reportingPeriod"),
         ...(metadata.geography ? { geography: metadata.geography } : {})
       });
-      const total = result.totals.totalKgCO2e;
+      const reportBreakdown = buildDpcV1ReportBreakdown(envelope.results.metrics);
+      const total = reportBreakdown.total.value;
       document.querySelector<HTMLElement>("#total")!.textContent = format(total);
       document.querySelector<HTMLElement>("#report-title")!.textContent = metadata.assessmentName || "DPC assessment report";
       document.querySelector<HTMLElement>("#report-subject")!.textContent = envelope.scope.subject;
@@ -302,14 +304,14 @@
         const detail = document.createElement("strong"); detail.textContent = content;
         item.append(term, detail); return item;
       }));
-      const rows = envelope.results.metrics.filter((metric) => metric.id !== "dpc.total");
+      const rows = reportBreakdown.categories;
       const breakdown = document.querySelector<HTMLElement>("#breakdown")!;
       breakdown.replaceChildren(...rows.map((metric) => {
         const row = document.createElement("div"); row.className = "breakdown-item";
         const top = document.createElement("div"); top.className = "breakdown-row";
         const name = document.createElement("span"); name.textContent = metric.label;
         const figure = document.createElement("strong");
-        const share = total > 0 ? (metric.value / total) * 100 : null;
+        const share = metric.sharePercent;
         figure.textContent = `${format(metric.value)} kgCO₂e${share === null ? "" : ` · ${format(share)}%`}`;
         top.append(name, figure);
         const track = document.createElement("div"); track.className = "bar-track";
