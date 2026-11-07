@@ -61,3 +61,11 @@ test("catalogue validation reports duplicate factor identifiers", () => {
 test("catalogue validation rejects a non-array payload", () => {
   assert.deepEqual(validateEmissionFactorCatalogue({}), ["catalogue must be an array"]);
 });
+
+test("rejects impossible calendar dates in factor reference periods", () => {
+  const errors = validateEmissionFactorRecord({
+    ...validFactor,
+    referencePeriod: { startDate: "2025-02-31", endDate: "2025-03-01" },
+  });
+  assert.ok(errors.some((error) => error.includes("valid YYYY-MM-DD dates")));
+});
