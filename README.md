@@ -14,7 +14,7 @@ The initial use case is digital preservation. The platform is intended to expand
 
 ## Try the development calculator
 
-The first DPC v1.0 calculator interface is available at `/calculator/dpc-v1/`. It connects to the TypeScript engine and provides optional input sections for on-premise equipment, cloud services, networking, website use, and travel. Example values are illustrative only; replace them with documented activity data and emission factors. The calculator is a development preview, not a validated reporting tool.
+The first DPC v1.0 calculator interface is available at `/calculator/dpc-v1/`. It connects to the TypeScript engine and provides optional input sections for on-premise equipment, cloud services, networking, website use, and travel. Users can print results or download a JSON record containing assessment metadata, inputs, outputs, and limitations. Example values are illustrative only; replace them with documented activity data and emission factors. The calculator is a development preview, not a validated reporting tool.
 
 ## Methodology and attribution
 
