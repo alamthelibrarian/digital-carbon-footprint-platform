@@ -1,0 +1,188 @@
+/**
+ * DPC v1.0 adapter to the shared DCFP result envelope.
+ *
+ * This is a presentation/traceability wrapper only. It does not alter or
+ * recalculate the method-specific result returned by the DPC engine.
+ */
+import type {
+  DpcCalculationInput,
+  DpcCalculationResult,
+  DpcConfidence,
+  DpcFactorProvenance,
+} from "./index.ts";
+
+export interface DpcAssessmentMetadata {
+  id: string;
+  createdAt: string;
+  title?: string;
+  subject: string;
+  systemBoundary: string;
+  functionalUnit: string;
+  reportingPeriod: string;
+  geography?: string;
+}
+
+export interface DcfpMetric {
+  id: string;
+  label: string;
+  value: number;
+  unit: "kgCO2e";
+  context?: string;
+}
+
+export interface DcfpFactorProvenanceEntry {
+  location: string;
+  provenance: DpcFactorProvenance;
+}
+
+export interface DcfpDpcResultEnvelope {
+  schemaVersion: "1.0";
+  assessment: {
+    id: string;
+    createdAt: string;
+    title?: string;
+  };
+  method: {
+    id: "dpc-carbon-footprint-toolkit";
+    version: "1.0";
+    name: "DPC Carbon Footprint Toolkit";
+  };
+  scope: {
+    subject: string;
+    systemBoundary: string;
+    functionalUnit: string;
+    reportingPeriod: string;
+    referencePeriod: "1 year";
+    geography?: string;
+  };
+  inputs: DpcCalculationInput;
+  results: {
+    native: DpcCalculationResult;
+    metrics: DcfpMetric[];
+  };
+  factorProvenance: DcfpFactorProvenanceEntry[];
+  dataQuality: {
+    activityConfidence: DpcConfidence[];
+    factorProvenanceCoverage: "none" | "partial" | "recorded";
+  };
+  assumptions: string[];
+  limitations: string[];
+  traceability: {
+    engine: "dpc-v1-typescript";
+    engineVersion: "0.1.0";
+    calculationTimestamp: string;
+  };
+}
+
+const validText = (value: unknown): value is string =>
+  typeof value === "string" && value.trim().length > 0;
+
+const validIsoDateTime = (value: string): boolean => {
+  if (!validText(value) || !/^\d{4}-\d{2}-\d{2}T/.test(value)) return false;
+  const timestamp = Date.parse(value);
+  return Number.isFinite(timestamp) && new Date(timestamp).toISOString() === value;
+};
+
+export function adaptDpcV1Result(
+  input: DpcCalculationInput,
+  result: DpcCalculationResult,
+  metadata: DpcAssessmentMetadata,
+): DcfpDpcResultEnvelope {
+  for (const [field, value] of Object.entries({
+    id: metadata?.id,
+    subject: metadata?.subject,
+    systemBoundary: metadata?.systemBoundary,
+    functionalUnit: metadata?.functionalUnit,
+    reportingPeriod: metadata?.reportingPeriod,
+  })) {
+    if (!validText(value)) throw new TypeError(`metadata.${field} must be a non-empty string.`);
+  }
+  if (!validIsoDateTime(metadata.createdAt)) {
+    throw new TypeError("metadata.createdAt must be a valid ISO 8601 UTC timestamp.");
+  }
+  if (metadata.title !== undefined && !validText(metadata.title)) {
+    throw new TypeError("metadata.title must be a non-empty string when supplied.");
+  }
+  if (metadata.geography !== undefined && !validText(metadata.geography)) {
+    throw new TypeError("metadata.geography must be a non-empty string when supplied.");
+  }
+  if (result.method !== "dpc-carbon-footprint-toolkit" || result.version !== "1.0") {
+    throw new TypeError("result must be produced by DPC Carbon Footprint Toolkit v1.0.");
+  }
+
+  const factorProvenance: DcfpFactorProvenanceEntry[] = [];
+  const add = (location: string, value?: DpcFactorProvenance | DpcFactorProvenance[]) => {
+    if (Array.isArray(value)) value.forEach((item, index) => factorProvenance.push({
+      location: `${location}[${index}]`, provenance: item,
+    }));
+    else if (value) factorProvenance.push({ location, provenance: value });
+  };
+
+  result.onPremise.forEach((row, index) => add(`onPremise[${index}]`, row.factorProvenance));
+  result.cloud.forEach((row, index) => add(`cloud[${index}]`, row.factorProvenance));
+  result.networking.forEach((row, index) => add(`networking[${index}]`, row.factorProvenance));
+  if (result.websiteUse) add("websiteUse", result.websiteUse.factorProvenance);
+  result.travel.forEach((row, index) => add(`travel[${index}]`, row.factorProvenance));
+
+  const activityConfidence = [
+    ...result.onPremise.map((row) => row.confidence),
+    ...result.cloud.map((row) => row.confidence),
+    ...result.networking.map((row) => row.confidence),
+  ];
+  const expectedProvenanceSlots = result.onPremise.length + result.cloud.length
+    + result.networking.length + (result.websiteUse ? 1 : 0) + result.travel.length;
+  const factorProvenanceCoverage = factorProvenance.length === 0
+    ? "none"
+    : factorProvenance.length >= expectedProvenanceSlots ? "recorded" : "partial";
+
+  const totals = result.totals;
+  const metrics: DcfpMetric[] = [
+    { id: "dpc.on-premise", label: "On-premise", value: totals.onPremiseKgCO2e, unit: "kgCO2e" },
+    { id: "dpc.cloud-data-centres-servers", label: "Cloud data centres and servers", value: totals.cloudDataCentresServersKgCO2e, unit: "kgCO2e" },
+    { id: "dpc.cloud-networking", label: "Cloud networking", value: totals.cloudNetworkingKgCO2e, unit: "kgCO2e" },
+    { id: "dpc.on-premise-networking", label: "On-premise networking", value: totals.networkingOnPremiseKgCO2e, unit: "kgCO2e" },
+    { id: "dpc.website-use", label: "Website use", value: totals.websiteUseKgCO2e, unit: "kgCO2e" },
+    { id: "dpc.travel", label: "Travel", value: totals.travelKgCO2e, unit: "kgCO2e" },
+    { id: "dpc.total", label: "DPC total", value: totals.totalKgCO2e, unit: "kgCO2e", context: "Native DPC v1.0 aggregate; not harmonised with other methods." },
+  ];
+
+  return {
+    schemaVersion: "1.0",
+    assessment: {
+      id: metadata.id,
+      createdAt: metadata.createdAt,
+      ...(metadata.title ? { title: metadata.title } : {}),
+    },
+    method: {
+      id: "dpc-carbon-footprint-toolkit",
+      version: "1.0",
+      name: "DPC Carbon Footprint Toolkit",
+    },
+    scope: {
+      subject: metadata.subject,
+      systemBoundary: metadata.systemBoundary,
+      functionalUnit: metadata.functionalUnit,
+      reportingPeriod: metadata.reportingPeriod,
+      referencePeriod: result.referencePeriod,
+      ...(metadata.geography ? { geography: metadata.geography } : {}),
+    },
+    inputs,
+    results: { native: result, metrics },
+    factorProvenance,
+    dataQuality: {
+      activityConfidence,
+      factorProvenanceCoverage,
+    },
+    assumptions: [
+      "The native calculation and aggregation rules of DPC Carbon Footprint Toolkit v1.0 are preserved.",
+      "The reporting period and functional unit are supplied by the assessment author and are not inferred by the adapter.",
+      "Missing factor provenance remains missing; no source, geography, year, or quality value is fabricated.",
+    ],
+    limitations: [...result.limitations],
+    traceability: {
+      engine: "dpc-v1-typescript",
+      engineVersion: "0.1.0",
+      calculationTimestamp: metadata.createdAt,
+    },
+  };
+}
