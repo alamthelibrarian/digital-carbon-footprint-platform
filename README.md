@@ -2,7 +2,7 @@
 
 An open-source, multi-method platform for digital carbon footprint calculation, analysis, and reporting.
 
-> **Project status:** Initial foundation. The first calculation method planned for implementation is the Digital Preservation Coalition (DPC) Carbon Footprint Toolkit v1.0. Other methods are roadmap items and are not yet implemented.
+> **Project status:** Early development. The first calculation engine is an independent implementation based on the Digital Preservation Coalition (DPC) Carbon Footprint Toolkit v1.0. It is under development and has not yet been validated against the source workbook. Other methods are roadmap items, not implemented engines.
 
 ## Project scope
 
@@ -31,12 +31,33 @@ Results from different methodologies are not automatically comparable. Any compa
 
 | Method or framework | Intended role | Status |
 |---|---|---|
-| DPC Carbon Footprint Toolkit v1.0 | Initial digital-preservation calculation engine | Planned initial implementation |
-| Software Carbon Intensity (SCI), ISO/IEC 21031 | Software carbon-intensity assessment | Planned |
+| DPC Carbon Footprint Toolkit v1.0 | Initial digital-preservation calculation engine | Under development; not validated |
+| Software Carbon Intensity (SCI), ISO/IEC 21031 | Software carbon-intensity assessment | Planned research |
 | GHG Protocol | Organizational and value-chain GHG accounting/reporting alignment | Under evaluation; not a standalone formula engine |
-| ITU-T L.1410 / life-cycle assessment | ICT goods, networks, and services life-cycle assessment | Planned research and evaluation |
+| ITU-T L.1410 / life-cycle assessment | ICT goods, networks, and services life-cycle assessment | Planned research |
 
 No roadmap item should be interpreted as implemented until its calculation logic, tests, documentation, and validation are published.
+
+## Getting started
+
+### Requirements
+
+- Node.js 22 or later
+- npm
+
+### Install and run
+
+```bash
+npm install
+npm run dev
+```
+
+### Quality checks
+
+```bash
+npm test
+npm run build
+```
 
 ## Development principles
 
@@ -46,15 +67,16 @@ No roadmap item should be interpreted as implemented until its calculation logic
 4. Make assumptions and limitations visible to users.
 5. Do not publish production credentials, personal data, or private operational configuration.
 6. Keep this open-source project separate from any production deployment.
-
-## License
-
-The original code and documentation in this repository are intended to be released under the MIT License. This license does not grant rights to third-party content, methodologies, trademarks, or materials referenced by the project. See `LICENSE` for the terms applying to original project code.
-
-## Project status
-
-This repository is the public development project. It is separate from the existing production calculator. No production database, credentials, OAuth configuration, or deployment target is included here.
+7. Do not describe a method as validated until independent regression evidence is available.
 
 ## Contributing
 
-Contribution guidelines and technical setup instructions will be added as the application foundation is implemented.
+Read [CONTRIBUTING.md](./CONTRIBUTING.md) before opening an issue or pull request. Security concerns should follow [SECURITY.md](./SECURITY.md).
+
+## License
+
+The original code and documentation in this repository are intended to be released under the MIT License. This license does not grant rights to third-party content, methodologies, trademarks, or materials referenced by the project. See [LICENSE](./LICENSE) for the terms applying to original project code.
+
+## Project status and separation
+
+This repository is the public development project. It is separate from the existing production calculator. No production database, credentials, OAuth configuration, or deployment target is included here.
