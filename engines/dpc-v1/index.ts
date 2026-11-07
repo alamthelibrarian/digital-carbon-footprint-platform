@@ -144,8 +144,9 @@ export interface DpcCalculationResult {
     lowEmissionsKgCO2e: number;
     highEmissionsKgCO2e: number;
     emissionsKgCO2e: number;
+    factorProvenance?: DpcFactorProvenance[];
   } | null;
-  travel: Array<{ description: string; emissionsKgCO2e: number; source: string; notes?: string }>;
+  travel: Array<{ description: string; emissionsKgCO2e: number; source: string; factorProvenance?: DpcFactorProvenance; notes?: string }>;
   totals: {
     onPremiseKgCO2e: number;
     cloudDataCentresServersKgCO2e: number;
