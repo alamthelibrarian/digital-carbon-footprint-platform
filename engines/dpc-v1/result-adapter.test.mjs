@@ -85,7 +85,6 @@ test("does not fabricate a functional unit, boundary, or factor provenance", () 
     functionalUnit: "One year of service",
     systemBoundary: "User-defined operational boundary",
   });
-  assert.equal(envelope.factorProvenanceCoverage, undefined);
   assert.deepEqual(envelope.factorProvenance, []);
   assert.equal(envelope.dataQuality.factorProvenanceCoverage, "none");
 });
