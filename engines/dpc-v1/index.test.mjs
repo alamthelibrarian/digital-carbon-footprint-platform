@@ -415,3 +415,89 @@ test("Rejects non-finite derived values caused by numeric overflow", () => {
     ],
   }), /non-finite result/);
 });
+
+
+test("Rejects negative and non-finite activity inputs across DPC categories", () => {
+  assert.throws(() => calculateOnPremiseRow({
+    category: "bitstream-preservation",
+    machineName: "Negative server",
+    idlePowerW: -1,
+    maxPowerW: 10,
+    meanUtilisation: 0.5,
+    storageCapacityTB: 1,
+    storageEnergyWhPerTBh: 1,
+    pue: 1,
+    gridFactorKgCO2ePerKWh: 0.4,
+    gridFactorSource: "Test source",
+    source: "Test activity data",
+    confidence: "high",
+  }), /finite, non-negative number/);
+
+  assert.throws(() => calculateNetworkingRow({
+    category: "acquisition-transfer-ingest",
+    activityName: "Non-finite transfer",
+    transmittedMBPerDay: Number.NaN,
+    receivedMBPerDay: 0,
+    networkEnergyIntensityKWhPerGB: 0.01,
+    gridFactorKgCO2ePerKWh: 0.4,
+    gridFactorSource: "Test source",
+    source: "Test activity data",
+    confidence: "high",
+  }), /finite, non-negative number/);
+
+  assert.throws(() => calculateWebsiteUse({
+    averagePageSizeKB: Number.POSITIVE_INFINITY,
+    annualVisits: 1,
+    averageDownloadSizeMB: 0,
+    annualDownloads: 0,
+    fixedLineIntensityKWhPerGB: 0.01,
+    mobileIntensityKWhPerGB: 0.02,
+    fixedLineIntensitySource: "Test source",
+    mobileIntensitySource: "Test source",
+    meanGlobalGridFactorKgCO2ePerKWh: 0.4,
+    gridFactorSource: "Test source",
+  }), /finite, non-negative number/);
+
+  assert.throws(() => calculateTravelRow({
+    description: "Negative trip",
+    emissionsKgCO2e: -0.1,
+    source: "Test source",
+  }), /finite, non-negative number/);
+
+  assert.throws(() => calculateDpcV1({
+    cloud: [{
+      category: "networking",
+      serviceName: "Non-finite cloud service",
+      annualEmissionsKgCO2e: Number.POSITIVE_INFINITY,
+      source: "Provider report",
+      confidence: "high",
+    }],
+  }), /finite, non-negative number/);
+});
+
+test("Rejects blank evidence descriptions and source fields", () => {
+  assert.throws(() => calculateOnPremiseRow({
+    category: "bitstream-preservation",
+    machineName: "   ",
+    idlePowerW: 1,
+    maxPowerW: 1,
+    meanUtilisation: 0,
+    storageCapacityTB: 0,
+    storageEnergyWhPerTBh: 0,
+    pue: 1,
+    gridFactorKgCO2ePerKWh: 0.4,
+    gridFactorSource: "Test source",
+    source: "Test activity data",
+    confidence: "high",
+  }), /machineName must be a non-empty string/);
+
+  assert.throws(() => calculateDpcV1({
+    cloud: [{
+      category: "data-centres-servers",
+      serviceName: "Cloud service",
+      annualEmissionsKgCO2e: 1,
+      source: "   ",
+      confidence: "high",
+    }],
+  }), /source must be a non-empty string/);
+});
