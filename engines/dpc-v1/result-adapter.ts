@@ -92,9 +92,9 @@ export function adaptDpcV1Result(
   result.travel.forEach((row, index) => add(`travel[${index}]`, row.factorProvenance));
 
   const activityConfidence = [
-    ...result.onPremise.map((row) => row.confidence),
-    ...result.cloud.map((row) => row.confidence),
-    ...result.networking.map((row) => row.confidence),
+    ...result.onPremise.map((row, index) => `onPremise[${index}]: ${row.confidence}`),
+    ...result.cloud.map((row, index) => `cloud[${index}]: ${row.confidence}`),
+    ...result.networking.map((row, index) => `networking[${index}]: ${row.confidence}`),
   ];
   const expectedProvenanceSlots = result.onPremise.length + result.cloud.length
     + result.networking.length + (result.websiteUse ? 1 : 0) + result.travel.length;
