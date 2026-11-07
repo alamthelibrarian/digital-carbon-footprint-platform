@@ -573,3 +573,52 @@ test("Validates factor provenance metadata without changing calculation inputs",
   });
   assert.ok(Math.abs(valid.emissionsKgCO2e - 54.312) < 1e-9);
 });
+
+
+test("rejects recognized provenance values that differ from DPC calculation inputs", () => {
+  assert.throws(() => calculateOnPremiseRow({
+    category: "bitstream-preservation", machineName: "Server",
+    idlePowerW: 10, maxPowerW: 20, meanUtilisation: 0.5,
+    storageCapacityTB: 1, storageEnergyWhPerTBh: 0.5, pue: 1,
+    gridFactorKgCO2ePerKWh: 0.4, gridFactorSource: "Grid dataset",
+    source: "Meter readings", confidence: "high",
+    factorProvenance: { factor: "electricity-grid", value: 0.5, unit: "kgCO2e/kWh", source: "Grid dataset" },
+  }), /must match the value used by the DPC calculation/);
+
+  assert.throws(() => calculateNetworkingRow({
+    category: "acquisition-transfer-ingest", activityName: "Transfer",
+    transmittedMBPerDay: 10, receivedMBPerDay: 5,
+    networkEnergyIntensityKWhPerGB: 0.0065, gridFactorKgCO2ePerKWh: 0.4,
+    gridFactorSource: "Grid dataset", source: "Transfer logs", confidence: "high",
+    factorProvenance: [
+      { factor: "electricity-grid", value: 0.4, unit: "kgCO2e/kWh", source: "Grid dataset" },
+      { factor: "network-energy-intensity", value: 0.007, unit: "kWh/GB", source: "Study" },
+    ],
+  }), /must match the value used by the DPC calculation/);
+
+  assert.throws(() => calculateDpcV1({
+    cloud: [{
+      category: "data-centres-servers", serviceName: "Cloud service",
+      annualEmissionsKgCO2e: 10, source: "Provider report", confidence: "high",
+      factorProvenance: { factor: "provider-reported-emissions", value: 9, unit: "kgCO2e/year", source: "Provider report" },
+    }],
+  }), /must match the value used by the DPC calculation/);
+
+  assert.throws(() => calculateWebsiteUse({
+    averagePageSizeKB: 100, annualVisits: 1000,
+    averageDownloadSizeMB: 1, annualDownloads: 10,
+    fixedLineIntensityKWhPerGB: 0.01, mobileIntensityKWhPerGB: 0.02,
+    fixedLineIntensitySource: "Fixed study", mobileIntensitySource: "Mobile study",
+    meanGlobalGridFactorKgCO2ePerKWh: 0.4, gridFactorSource: "Grid dataset",
+    factorProvenance: [
+      { factor: "fixed-line-network-intensity", value: 0.01, unit: "kWh/GB", source: "Fixed study" },
+      { factor: "mobile-network-intensity", value: 0.02, unit: "kWh/GB", source: "Mobile study" },
+      { factor: "mean-global-grid", value: 0.5, unit: "kgCO2e/kWh", source: "Grid dataset" },
+    ],
+  }), /must match the value used by the DPC calculation/);
+
+  assert.throws(() => calculateTravelRow({
+    description: "Work trip", emissionsKgCO2e: 5, source: "Travel calculator",
+    factorProvenance: { factor: "travel-emissions-calculation", value: 4, unit: "kgCO2e", source: "Travel calculator" },
+  }), /must match the value used by the DPC calculation/);
+});
