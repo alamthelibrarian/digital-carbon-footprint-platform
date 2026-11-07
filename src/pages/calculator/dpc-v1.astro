@@ -25,6 +25,10 @@
           <div class="fields">
             <label>Assessment / inventory name<input name="inventoryName" value="Digital preservation footprint assessment" /></label>
             <label>Organization / unit<input name="organization" placeholder="Organization or department" /></label>
+            <label>Assessment subject<input name="subject" placeholder="What system, service, or activity is being assessed" required /></label>
+            <label>System boundary<input name="systemBoundary" placeholder="Describe included activities, infrastructure, and exclusions" required /></label>
+            <label>Functional unit<input name="functionalUnit" placeholder="e.g. annual operation of the digital repository" required /></label>
+            <label>Reporting period<input name="reportingPeriod" placeholder="e.g. 1 January–31 December 2025" required /></label>
             <label>Geography<input name="geography" placeholder="Country, region, or site" /></label>
             <label>Prepared by<input name="preparedBy" placeholder="Name or role (optional)" /></label>
             <label>Period start<input name="periodStart" type="date" /></label>
@@ -130,6 +134,7 @@
 </html>
 <script>
   import { calculateDpcV1 } from "../../../engines/dpc-v1/index";
+  import { adaptDpcV1Result } from "../../../engines/dpc-v1/result-adapter";
 
   const form = document.querySelector<HTMLFormElement>("#calculator")!;
   const results = document.querySelector<HTMLElement>("#results")!;
@@ -203,6 +208,17 @@
       }];
 
       const result = calculateDpcV1(input);
+      const createdAt = new Date().toISOString();
+      const envelope = adaptDpcV1Result(input, result, {
+        id: crypto.randomUUID(),
+        createdAt,
+        title: metadata.assessmentName,
+        subject: value("subject"),
+        systemBoundary: value("systemBoundary"),
+        functionalUnit: value("functionalUnit"),
+        reportingPeriod: value("reportingPeriod"),
+        ...(metadata.geography ? { geography: metadata.geography } : {})
+      });
       document.querySelector<HTMLElement>("#total")!.textContent = format(result.totals.totalKgCO2e);
       const rows: Array<[string, number]> = [
         ["On-premise equipment", result.totals.onPremiseKgCO2e],
@@ -224,15 +240,10 @@
         return row;
       }));
       latestRecord = {
-        schemaVersion: "1.0.0",
-        generatedAt: new Date().toISOString(),
         platform: "Digital Carbon Footprint Platform",
-        method: { id: result.method, version: result.version, status: "development-preview-not-validated" },
-        metadata,
-        units: { emissions: "kgCO2e", referencePeriod: result.referencePeriod },
-        input,
-        result,
-        limitations: result.limitations
+        recordStatus: "development-preview-not-validated",
+        report: envelope,
+        sourceMetadata: metadata
       };
       document.querySelector<HTMLElement>("#details")!.textContent = JSON.stringify(latestRecord, null, 2);
       results.hidden = false;
@@ -244,7 +255,7 @@
   });
   document.querySelector<HTMLButtonElement>("#download")!.addEventListener("click", () => {
     if (!latestRecord) return;
-    const safeName = (latestRecord.metadata.assessmentName || "dpc-assessment")
+    const safeName = (latestRecord.report.assessment.title || "dpc-assessment")
       .toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "") || "dpc-assessment";
     const blob = new Blob([JSON.stringify(latestRecord, null, 2)], { type: "application/json" });
     const url = URL.createObjectURL(blob);
