@@ -282,9 +282,15 @@ export function calculateNetworkingRow(input: DpcNetworkingInput): DpcNetworking
 }
 
 export function calculateWebsiteUse(input: DpcWebsiteUseInput) {
-  for (const [name, value] of Object.entries(input)) {
-    if (typeof value === "number") requireNonNegative(name, value);
-  }
+  for (const [name, value] of Object.entries({
+    averagePageSizeKB: input.averagePageSizeKB,
+    annualVisits: input.annualVisits,
+    averageDownloadSizeMB: input.averageDownloadSizeMB,
+    annualDownloads: input.annualDownloads,
+    fixedLineIntensityKWhPerGB: input.fixedLineIntensityKWhPerGB,
+    mobileIntensityKWhPerGB: input.mobileIntensityKWhPerGB,
+    meanGlobalGridFactorKgCO2ePerKWh: input.meanGlobalGridFactorKgCO2ePerKWh,
+  })) requireNonNegative(name, value);
   requireText("fixedLineIntensitySource", input.fixedLineIntensitySource);
   requireText("mobileIntensitySource", input.mobileIntensitySource);
   requireText("gridFactorSource", input.gridFactorSource);
