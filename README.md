@@ -55,6 +55,7 @@ npm run dev
 ### Quality checks
 
 ```bash
+npm run typecheck
 npm test
 npm run build
 ```
