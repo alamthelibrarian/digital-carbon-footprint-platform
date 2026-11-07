@@ -44,3 +44,29 @@ See [FORMULA-MAP.md](./FORMULA-MAP.md) for the current formula audit. The audit 
 ## Run tests
 
 From the repository root, run `npm test` with Node.js 22 or later.
+
+
+## Shared DCFP result adapter
+
+The optional adapter in `result-adapter.ts` wraps the native `calculateDpcV1` output in the DCFP result envelope without changing calculations. Callers must supply assessment metadata, including the subject, system boundary, functional unit, and reporting period; the adapter does not infer these fields.
+
+Example:
+
+```ts
+import { calculateDpcV1 } from "./index.ts";
+import { adaptDpcV1Result } from "./result-adapter.ts";
+
+const input = { /* DPC v1.0 activity inputs */ };
+const nativeResult = calculateDpcV1(input);
+const report = adaptDpcV1Result(input, nativeResult, {
+  id: "assessment-001",
+  createdAt: "2026-11-07T08:30:00.000Z",
+  subject: "Digital preservation service",
+  systemBoundary: "Describe the boundary actually assessed",
+  functionalUnit: "Define the service unit actually assessed",
+  reportingPeriod: "2025 calendar year",
+});
+
+```
+
+The envelope retains the full native result at `results.native`. The adapter's factor-provenance coverage indicator measures whether included input rows carry provenance metadata; it does not validate source authenticity, scientific quality, or methodological suitability. See [the shared result contract](../../docs/RESULT-CONTRACT.md).
