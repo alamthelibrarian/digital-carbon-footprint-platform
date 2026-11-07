@@ -324,8 +324,8 @@
       const confidenceEntries = envelope.dataQuality.activityConfidence;
       activityConfidence.replaceChildren(...confidenceEntries.map((confidence, index) => {
         const item = document.createElement("div"); item.className = "provenance-item";
-        const label = document.createElement("strong"); label.textContent = `Calculation row ${index + 1}`;
-        const detail = document.createElement("span"); detail.textContent = `Activity-data confidence: ${confidence}`;
+        const label = document.createElement("strong"); label.textContent = "Activity-data confidence";
+        const detail = document.createElement("span"); detail.textContent = confidence;
         item.append(label, detail); return item;
       }));
       const provenance = document.querySelector<HTMLElement>("#provenance")!;
