@@ -1,0 +1,195 @@
+---
+---
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content="Estimate digital preservation emissions with the DPC Carbon Footprint Toolkit v1.0 calculation engine." />
+    <meta name="theme-color" content="#151a19" />
+    <title>DPC v1.0 Calculator · DCFP</title>
+  </head>
+  <body>
+    <main class="shell">
+      <header class="top"><a href="/" class="brand">DCFP<span>.</span></a><a href="/methods/dpc-v1/">Method notes ↗</a></header>
+      <section class="heading">
+        <p class="eyebrow">CALCULATION WORKSPACE · METHOD 01</p>
+        <h1>DPC Carbon Footprint Toolkit <em>v1.0</em></h1>
+        <p>Enter activity data and the emission factors you have selected. Every factor must be accompanied by its source; this calculator does not silently supply country defaults.</p>
+        <div class="notice"><strong>Development preview — not validated.</strong> This independent implementation is based on the DPC Carbon Footprint Toolkit v1.0. Results are indicative only and must not be used for formal reporting, compliance, or audited disclosure. Embodied carbon is not included.</div>
+      </section>
+
+      <form id="calculator">
+        <section class="panel">
+          <div class="panel-head"><div><p class="eyebrow">01 / INFRASTRUCTURE</p><h2>On-premise equipment</h2></div><label class="toggle"><input type="checkbox" name="onEnabled" checked /> Include</label></div>
+          <div class="fields">
+            <label>Activity category<select name="onCategory"><option value="acquisition-transfer-ingest">Acquisition, transfer & ingest</option><option value="bitstream-preservation">Bitstream preservation</option><option value="content-preservation">Content preservation</option><option value="metadata-management">Metadata management</option><option value="discovery-access">Discovery & access</option></select></label>
+            <label>Machine / equipment name<input name="machineName" required value="Example server" /></label>
+            <label>Idle power (W)<input name="idlePowerW" type="number" min="0" step="any" value="100" /></label>
+            <label>Maximum power (W)<input name="maxPowerW" type="number" min="0" step="any" value="200" /></label>
+            <label>Mean utilisation (0–1)<input name="meanUtilisation" type="number" min="0" max="1" step="any" value="0.5" /></label>
+            <label>Storage capacity (TB)<input name="storageCapacityTB" type="number" min="0" step="any" value="10" /></label>
+            <label>Storage intensity (Wh/TB/hour)<input name="storageEnergyWhPerTBh" type="number" min="0" step="any" value="0.5" /></label>
+            <label>PUE<input name="pue" type="number" min="0.000001" step="any" value="1.5" /></label>
+            <label>Grid factor (kgCO₂e/kWh)<input name="gridFactorKgCO2ePerKWh" type="number" min="0" step="any" value="0.45" /></label>
+            <label>Grid factor source<input name="gridFactorSource" required value="Example source — replace with your source" /></label>
+            <label>Activity data source<input name="onSource" required value="Example measurements — replace with your source" /></label>
+            <label>Data confidence<select name="onConfidence"><option value="high">High</option><option value="medium" selected>Medium</option><option value="low">Low</option></select></label>
+          </div>
+        </section>
+
+        <section class="panel">
+          <div class="panel-head"><div><p class="eyebrow">02 / CLOUD SERVICES</p><h2>Cloud-hosted services</h2><p class="hint">Use annual emissions supplied by a provider or a documented external calculation.</p></div><label class="toggle"><input type="checkbox" name="cloudEnabled" /> Include</label></div>
+          <div class="fields">
+            <label>Data centres / servers (kgCO₂e/year)<input name="cloudServerKg" type="number" min="0" step="any" value="0" /></label>
+            <label>Service name<input name="cloudServerName" value="Cloud server service" /></label>
+            <label>Source<input name="cloudServerSource" value="Provider report / external calculation" /></label>
+            <label>Networking (kgCO₂e/year)<input name="cloudNetworkKg" type="number" min="0" step="any" value="0" /></label>
+            <label>Networking service name<input name="cloudNetworkName" value="Cloud networking service" /></label>
+            <label>Source<input name="cloudNetworkSource" value="Provider report / external calculation" /></label>
+            <label>Data confidence<select name="cloudConfidence"><option value="high">High</option><option value="medium" selected>Medium</option><option value="low">Low</option></select></label>
+          </div>
+        </section>
+
+        <section class="panel">
+          <div class="panel-head"><div><p class="eyebrow">03 / NETWORKING</p><h2>On-premise data transfer</h2></div><label class="toggle"><input type="checkbox" name="networkEnabled" /> Include</label></div>
+          <div class="fields">
+            <label>Activity category<select name="networkCategory"><option value="acquisition-transfer-ingest">Acquisition, transfer & ingest</option><option value="bitstream-preservation">Bitstream preservation</option><option value="content-preservation">Content preservation</option><option value="metadata-management">Metadata management</option><option value="discovery-access">Discovery & access</option></select></label>
+            <label>Activity name<input name="networkName" value="Example transfer" /></label>
+            <label>Transmitted data (MB/day)<input name="transmittedMBPerDay" type="number" min="0" step="any" value="1000" /></label>
+            <label>Received data (MB/day)<input name="receivedMBPerDay" type="number" min="0" step="any" value="500" /></label>
+            <label>Network intensity (kWh/GB)<input name="networkIntensity" type="number" min="0" step="any" value="0.0065" /></label>
+            <label>Grid factor (kgCO₂e/kWh)<input name="networkGridFactor" type="number" min="0" step="any" value="0.45" /></label>
+            <label>Grid factor source<input name="networkGridSource" value="Example source — replace with your source" /></label>
+            <label>Activity data source<input name="networkSource" value="Example measurements — replace with your source" /></label>
+            <label>Data confidence<select name="networkConfidence"><option value="high">High</option><option value="medium" selected>Medium</option><option value="low">Low</option></select></label>
+          </div>
+        </section>
+
+        <section class="panel">
+          <div class="panel-head"><div><p class="eyebrow">04 / WEBSITE</p><h2>Website use</h2><p class="hint">The engine uses the midpoint of fixed-line and mobile energy-intensity inputs.</p></div><label class="toggle"><input type="checkbox" name="websiteEnabled" /> Include</label></div>
+          <div class="fields">
+            <label>Average page size (KB)<input name="pageSizeKB" type="number" min="0" step="any" value="100" /></label>
+            <label>Annual visits<input name="annualVisits" type="number" min="0" step="any" value="10000" /></label>
+            <label>Average download size (MB)<input name="downloadSizeMB" type="number" min="0" step="any" value="5" /></label>
+            <label>Annual downloads<input name="annualDownloads" type="number" min="0" step="any" value="1000" /></label>
+            <label>Fixed-line intensity (kWh/GB)<input name="fixedIntensity" type="number" min="0" step="any" value="0.0065" /></label>
+            <label>Mobile intensity (kWh/GB)<input name="mobileIntensity" type="number" min="0" step="any" value="0.1" /></label>
+            <label>Fixed-line factor source<input name="fixedSource" value="Document the source used" /></label>
+            <label>Mobile factor source<input name="mobileSource" value="Document the source used" /></label>
+            <label>Mean grid factor (kgCO₂e/kWh)<input name="websiteGridFactor" type="number" min="0" step="any" value="0.45" /></label>
+            <label>Grid factor source<input name="websiteGridSource" value="Document the source used" /></label>
+          </div>
+        </section>
+
+        <section class="panel">
+          <div class="panel-head"><div><p class="eyebrow">05 / TRAVEL</p><h2>Travel emissions</h2><p class="hint">Enter a total from a documented travel emissions source, in kilograms CO₂e.</p></div><label class="toggle"><input type="checkbox" name="travelEnabled" /> Include</label></div>
+          <div class="fields">
+            <label>Travel description<input name="travelDescription" value="Example trip" /></label>
+            <label>Emissions (kgCO₂e)<input name="travelKg" type="number" min="0" step="any" value="0" /></label>
+            <label>Source<input name="travelSource" value="External travel emissions calculator / report" /></label>
+          </div>
+        </section>
+        <div class="submit-row"><p>Example values are illustrative. Replace all values and source descriptions with evidence from your own inventory.</p><button type="submit">Calculate footprint ↗</button></div>
+      </form>
+
+      <section id="results" class="results" hidden aria-live="polite">
+        <div class="panel-head"><div><p class="eyebrow">CALCULATION OUTPUT</p><h2>Annual estimated emissions</h2></div><span class="unit">kgCO₂e / year</span></div>
+        <p id="total" class="total">—</p>
+        <div id="breakdown" class="breakdown"></div>
+        <details><summary>Calculation details and assumptions</summary><pre id="details"></pre></details>
+        <button id="print" class="print" type="button">Print results</button>
+      </section>
+      <p id="error" class="error" role="alert"></p>
+      <footer><p>Independent software implementation based on the <a href="https://doi.org/10.7207/carbonfootprinttoolkit26-01">DPC Carbon Footprint Toolkit v1.0</a>. Not an official DPC product and not endorsed by DPC. See the <a href="/methods/dpc-v1/">method notes</a> and <a href="https://github.com/alamthelibrarian/digital-carbon-footprint-platform">source code</a>.</p></footer>
+    </main>
+  </body>
+</html>
+<script>
+  import { calculateDpcV1 } from "../../../engines/dpc-v1/index";
+
+  const form = document.querySelector("#calculator");
+  const results = document.querySelector("#results");
+  const error = document.querySelector("#error");
+  const number = (name) => Number(form.elements.namedItem(name).value);
+  const value = (name) => form.elements.namedItem(name).value.trim();
+  const enabled = (name) => form.elements.namedItem(name).checked;
+  const format = (n) => new Intl.NumberFormat("en-US", { maximumFractionDigits: 3 }).format(n);
+
+  form.addEventListener("submit", (event) => {
+    event.preventDefault();
+    error.textContent = "";
+    try {
+      const input = {};
+      if (enabled("onEnabled")) input.onPremise = [{
+        category: value("onCategory"), machineName: value("machineName"),
+        idlePowerW: number("idlePowerW"), maxPowerW: number("maxPowerW"),
+        meanUtilisation: number("meanUtilisation"), storageCapacityTB: number("storageCapacityTB"),
+        storageEnergyWhPerTBh: number("storageEnergyWhPerTBh"), pue: number("pue"),
+        gridFactorKgCO2ePerKWh: number("gridFactorKgCO2ePerKWh"),
+        gridFactorSource: value("gridFactorSource"), source: value("onSource"),
+        confidence: value("onConfidence")
+      }];
+      if (enabled("cloudEnabled")) input.cloud = [
+        { category: "data-centres-servers", serviceName: value("cloudServerName"), annualEmissionsKgCO2e: number("cloudServerKg"), source: value("cloudServerSource"), confidence: value("cloudConfidence") },
+        { category: "networking", serviceName: value("cloudNetworkName"), annualEmissionsKgCO2e: number("cloudNetworkKg"), source: value("cloudNetworkSource"), confidence: value("cloudConfidence") }
+      ];
+      if (enabled("networkEnabled")) input.networking = [{
+        category: value("networkCategory"), activityName: value("networkName"),
+        transmittedMBPerDay: number("transmittedMBPerDay"), receivedMBPerDay: number("receivedMBPerDay"),
+        networkEnergyIntensityKWhPerGB: number("networkIntensity"),
+        gridFactorKgCO2ePerKWh: number("networkGridFactor"),
+        gridFactorSource: value("networkGridSource"), source: value("networkSource"),
+        confidence: value("networkConfidence")
+      }];
+      if (enabled("websiteEnabled")) input.websiteUse = {
+        averagePageSizeKB: number("pageSizeKB"), annualVisits: number("annualVisits"),
+        averageDownloadSizeMB: number("downloadSizeMB"), annualDownloads: number("annualDownloads"),
+        fixedLineIntensityKWhPerGB: number("fixedIntensity"), mobileIntensityKWhPerGB: number("mobileIntensity"),
+        fixedLineIntensitySource: value("fixedSource"), mobileIntensitySource: value("mobileSource"),
+        meanGlobalGridFactorKgCO2ePerKWh: number("websiteGridFactor"), gridFactorSource: value("websiteGridSource")
+      };
+      if (enabled("travelEnabled")) input.travel = [{
+        description: value("travelDescription"), emissionsKgCO2e: number("travelKg"), source: value("travelSource")
+      }];
+
+      const result = calculateDpcV1(input);
+      document.querySelector("#total").textContent = format(result.totals.totalKgCO2e);
+      const rows = [
+        ["On-premise equipment", result.totals.onPremiseKgCO2e],
+        ["Cloud data centres / servers", result.totals.cloudDataCentresServersKgCO2e],
+        ["Cloud networking", result.totals.cloudNetworkingKgCO2e],
+        ["On-premise networking", result.totals.networkingOnPremiseKgCO2e],
+        ["Website use", result.totals.websiteUseKgCO2e],
+        ["Travel", result.totals.travelKgCO2e]
+      ];
+      const breakdown = document.querySelector("#breakdown");
+      breakdown.replaceChildren(...rows.map(([label, amount]) => {
+        const row = document.createElement("div");
+        row.className = "breakdown-row";
+        const name = document.createElement("span");
+        name.textContent = label;
+        const figure = document.createElement("strong");
+        figure.textContent = format(amount);
+        row.append(name, figure);
+        return row;
+      }));
+      document.querySelector("#details").textContent = JSON.stringify({
+        method: "DPC Carbon Footprint Toolkit v1.0",
+        status: "Development preview — not validated",
+        referencePeriod: result.referencePeriod,
+        limitations: result.limitations,
+        inputAndCalculationDetails: result
+      }, null, 2);
+      results.hidden = false;
+      results.scrollIntoView({ behavior: "smooth", block: "start" });
+    } catch (exception) {
+      results.hidden = true;
+      error.textContent = exception instanceof Error ? exception.message : "Calculation failed. Check the input values.";
+    }
+  });
+  document.querySelector("#print").addEventListener("click", () => window.print());
+</script>
+<style>
+  :global(*){box-sizing:border-box}:global(html){background:#151a19;color:#e9eeeb;font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}:global(body){margin:0}.shell{max-width:1040px;margin:auto;padding:28px 24px 56px}.top{display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid #303936;padding-bottom:18px}.top a{color:#a9cbb7;text-decoration:none;font-size:13px}.brand{font-size:21px!important;font-weight:800;letter-spacing:-1px;color:#f2f5f3!important}.brand span{color:#79b99b}.heading{padding:62px 0 34px;max-width:760px}.eyebrow{font-size:10px;letter-spacing:1.5px;font-weight:700;color:#82c5a2;margin:0 0 10px}.heading h1{font-size:clamp(34px,5vw,54px);line-height:1.08;letter-spacing:-2px;margin:0 0 16px}.heading h1 em{font-style:normal;color:#86c7a5}.heading>p:not(.eyebrow){color:#aeb9b3;line-height:1.7}.notice{margin-top:24px;padding:16px 18px;border:1px solid #785f3d;border-left:3px solid #c69b5a;border-radius:8px;background:#211f1a;color:#d7c7a9;font-size:13px;line-height:1.6}.notice strong{display:block;color:#f0d5a7;margin-bottom:4px}.panel{border:1px solid #35403a;border-radius:12px;padding:22px;margin:18px 0;background:#1a211e}.panel-head{display:flex;justify-content:space-between;gap:20px;align-items:center;margin-bottom:20px}.panel h2,.results h2{font-size:20px;letter-spacing:-.5px;margin:0}.hint{font-size:12px;color:#93a198;margin:7px 0 0;line-height:1.5}.toggle{display:flex;align-items:center;gap:8px;color:#aeb9b3;font-size:12px;white-space:nowrap}.toggle input{accent-color:#79b99b;width:16px;height:16px}.fields{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}.fields label{display:flex;flex-direction:column;gap:7px;color:#aeb9b3;font-size:12px}.fields input,.fields select{width:100%;background:#111715;border:1px solid #435047;border-radius:6px;padding:11px 12px;color:#edf2ee;font:inherit;font-size:14px;min-width:0}.fields input:focus,.fields select:focus{outline:2px solid #78b997;outline-offset:1px}.submit-row{display:flex;justify-content:space-between;align-items:center;gap:20px;margin:26px 0}.submit-row p{max-width:560px;color:#89968f;font-size:12px;line-height:1.6}.submit-row button,.print{border:0;border-radius:7px;background:#85c5a2;color:#102017;font-weight:750;padding:14px 19px;cursor:pointer;white-space:nowrap}.results{margin-top:40px;padding:26px;border:1px solid #527d65;border-radius:12px;background:#19231e}.results[hidden]{display:none}.unit{color:#a0b1a7;font-size:12px}.total{font-size:clamp(38px,7vw,58px);font-weight:750;letter-spacing:-2px;margin:12px 0 22px;color:#9bd3b2}.breakdown{border-top:1px solid #405047}.breakdown-row{display:flex;justify-content:space-between;gap:20px;padding:12px 0;border-bottom:1px solid #35443b;color:#c2ccc6;font-size:13px}.breakdown-row strong{font-variant-numeric:tabular-nums;color:#edf2ee}details{margin-top:20px;color:#cbd5ce;font-size:13px}summary{cursor:pointer}pre{white-space:pre-wrap;overflow-wrap:anywhere;max-height:440px;overflow:auto;background:#101613;padding:14px;border-radius:8px;color:#aebdb3;font-size:11px;line-height:1.5}.print{margin-top:18px;background:#33483b;color:#e9f4ed}.error{color:#f0a69a;font-size:13px;min-height:20px}footer{border-top:1px solid #303936;margin-top:64px;padding-top:18px;color:#89968f;font-size:12px;line-height:1.7}footer a{color:#9bc9ae;text-decoration:none}@media(max-width:650px){.shell{padding:20px 15px 42px}.heading{padding:48px 0 24px}.fields{grid-template-columns:1fr}.panel{padding:17px}.panel-head{align-items:flex-start}.submit-row{align-items:stretch;flex-direction:column}.submit-row button{width:100%}}@media print{ :global(html),:global(body){background:white!important;color:#111!important}.shell{max-width:none;padding:0}.top,.heading,form,footer,.print{display:none!important}.results{display:block!important;background:white;border:0;color:#111;padding:0}.results h2,.breakdown-row,.breakdown-row strong,details{color:#111}.total{color:#111}pre{color:#111;background:#f5f5f5} }
+</style>
