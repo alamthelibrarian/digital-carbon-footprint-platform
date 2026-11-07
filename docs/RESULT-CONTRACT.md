@@ -70,7 +70,7 @@ The DPC engine's native result shape remains unchanged. `adaptDpcV1Result(input,
 
 ## DPC v1.0 adapter mapping
 
-The current adapter emits schema version `1.0`, assessment metadata, method identity, caller-supplied scope, original inputs, native DPC output, seven kgCO2e metrics, factor-provenance entries with input locations, activity confidence values, provenance coverage status, assumptions, limitations, and engine traceability. Its timestamp is supplied by the caller to keep the adapter deterministic. Provenance coverage is a structural indicator only; it does not assess scientific quality or verify source accuracy.
+The current adapter emits schema version `1.0`, assessment metadata, method identity, caller-supplied scope, original inputs, native DPC output, seven kgCO2e metrics, factor-provenance entries with input locations, activity confidence values, provenance coverage status, assumptions, limitations, and engine traceability. Its timestamp is supplied by the caller to keep the adapter deterministic. Provenance coverage is a structural indicator: a row counts as covered only when every recorded factor entry has a non-empty source field. It does not assess scientific quality, source authority, or verify source accuracy.
 
 The adapter requires an explicit assessment ID, UTC ISO 8601 creation timestamp, subject, system boundary, functional unit, and reporting period. It preserves the native DPC one-year reference period separately from the caller's reporting-period label.
 
