@@ -19,7 +19,7 @@ The implementation does not include or redistribute the original DPC workbook, i
 
 ## Web calculator
 
-The Astro interface at `/calculator/dpc-v1/` consumes this engine directly. Each activity group can be included or excluded. The interface displays the annual total, category breakdown, and calculation details, and supports printing the result. Example values are prefilled for demonstration and must be replaced with evidence-based inputs. The interface does not currently save calculations or export structured reports.
+The Astro interface at `/calculator/dpc-v1/` consumes this engine directly. Each activity group can be included or excluded. The interface displays the annual total, category breakdown, and calculation details, and supports printing the result. Example values are prefilled for demonstration and must be replaced with evidence-based inputs. The interface does not save calculations on a server. It supports a user-initiated JSON download containing assessment metadata, submitted inputs, calculation outputs, and limitations. The JSON file is a portable record, not a validated reporting template.
 
 ## Validation still required
 
