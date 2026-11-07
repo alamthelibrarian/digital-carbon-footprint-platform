@@ -184,3 +184,28 @@ test("Regression fixture matches independently recalculated DPC workbook outputs
   assert.equal(result.travel[0].emissionsKgCO2e, 250);
   assert.ok(Math.abs(result.totals.totalKgCO2e - 686.975963125) < 1e-9);
 });
+
+
+test("Rejects unsupported cloud emissions categories", () => {
+  assert.throws(() => calculateDpcV1({
+    cloud: [{
+      category: "other",
+      serviceName: "Invalid service",
+      annualEmissionsKgCO2e: 1,
+      source: "Test source",
+      confidence: "high",
+    }],
+  }), /Unsupported cloud emissions category/);
+});
+
+test("Rejects invalid confidence values", () => {
+  assert.throws(() => calculateDpcV1({
+    cloud: [{
+      category: "networking",
+      serviceName: "Invalid confidence",
+      annualEmissionsKgCO2e: 1,
+      source: "Test source",
+      confidence: "unknown",
+    }],
+  }), /confidence must be high, medium, or low/);
+});
