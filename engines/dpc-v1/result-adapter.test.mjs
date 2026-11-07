@@ -102,3 +102,45 @@ test("rejects results from another method or version", () => {
   const native = calculateDpcV1(input);
   assert.throws(() => adaptDpcV1Result(input, { ...native, version: "2.0" }, metadata), /DPC Carbon Footprint Toolkit v1.0/);
 });
+
+test("does not overstate provenance coverage when one row has multiple factors", () => {
+  const input = {
+    networking: [
+      {
+        category: "acquisition-transfer-ingest",
+        activityName: "Transfer with two factors",
+        transmittedMBPerDay: 10,
+        receivedMBPerDay: 5,
+        networkEnergyIntensityKWhPerGB: 0.0065,
+        gridFactorKgCO2ePerKWh: 0.4,
+        gridFactorSource: "Grid dataset",
+        source: "Transfer logs",
+        confidence: "high",
+        factorProvenance: [
+          { factor: "electricity-grid", unit: "kgCO2e/kWh", source: "Grid dataset" },
+          { factor: "network-energy-intensity", unit: "kWh/GB", source: "Study" },
+        ],
+      },
+      {
+        category: "metadata-management",
+        activityName: "Transfer without factor metadata",
+        transmittedMBPerDay: 10,
+        receivedMBPerDay: 5,
+        networkEnergyIntensityKWhPerGB: 0.0065,
+        gridFactorKgCO2ePerKWh: 0.4,
+        gridFactorSource: "Grid dataset",
+        source: "Transfer logs",
+        confidence: "medium",
+      },
+    ],
+  };
+  const envelope = adaptDpcV1Result(input, calculateDpcV1(input), metadata);
+  assert.equal(envelope.factorProvenance.length, 2);
+  assert.equal(envelope.dataQuality.factorProvenanceCoverage, "partial");
+});
+
+test("preserves the supplied input snapshot in the envelope", () => {
+  const input = { travel: [{ description: "Trip", emissionsKgCO2e: 4, source: "Travel source" }] };
+  const envelope = adaptDpcV1Result(input, calculateDpcV1(input), metadata);
+  assert.deepEqual(envelope.inputs, input);
+});
