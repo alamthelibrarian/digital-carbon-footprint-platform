@@ -54,7 +54,10 @@ test("Website Use uses the simple fixed/mobile midpoint", () => {
     annualDownloads: 1000,
     fixedLineIntensityKWhPerGB: 0.0065,
     mobileIntensityKWhPerGB: 0.1,
+    fixedLineIntensitySource: "DPC Datasheet default",
+    mobileIntensitySource: "DPC Datasheet default",
     meanGlobalGridFactorKgCO2ePerKWh: 0.45,
+    gridFactorSource: "DPC Datasheet default",
   });
   assert.equal(result.dataVolumeGB, 6);
   assert.equal(result.midpointIntensityKWhPerGB, 0.05325);
