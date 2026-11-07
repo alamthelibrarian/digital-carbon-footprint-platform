@@ -8,7 +8,7 @@
     "build": "astro check && astro build",
     "preview": "astro preview",
     "check": "astro check",
-    "test": "node --experimental-strip-types --test engines/dpc-v1/index.test.mjs",
+    "test": "node --experimental-strip-types --test engines/dpc-v1/index.test.mjs src/lib/emission-factors.test.mjs",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
