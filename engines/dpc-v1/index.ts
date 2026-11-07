@@ -196,9 +196,23 @@ function validateConfidence(confidence: DpcConfidence): void {
   }
 }
 
+const KNOWN_FACTOR_UNITS: Record<string, string> = {
+  "electricity-grid": "kgCO2e/kWh",
+  "network-energy-intensity": "kWh/GB",
+  "fixed-line-network-intensity": "kWh/GB",
+  "mobile-network-intensity": "kWh/GB",
+  "mean-global-grid": "kgCO2e/kWh",
+  "provider-reported-emissions": "kgCO2e/year",
+  "travel-emissions-calculation": "kgCO2e",
+};
+
 function validateFactorProvenance(entry: DpcFactorProvenance): void {
   requireText("factorProvenance.factor", entry.factor);
   requireText("factorProvenance.unit", entry.unit);
+  const expectedUnit = KNOWN_FACTOR_UNITS[entry.factor];
+  if (expectedUnit && entry.unit !== expectedUnit) {
+    throw new RangeError(`factorProvenance.unit for ${entry.factor} must be ${expectedUnit}.`);
+  }
   if (entry.value !== undefined) requireNonNegative("factorProvenance.value", entry.value);
   if (entry.source !== undefined && entry.source !== null) requireText("factorProvenance.source", entry.source);
   if (entry.geography !== undefined && entry.geography !== null) requireText("factorProvenance.geography", entry.geography);
