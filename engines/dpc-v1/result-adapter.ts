@@ -71,15 +71,17 @@ export function adaptDpcV1Result(
 
   const factorProvenance: DcfpFactorProvenanceEntry<DpcFactorProvenance>[] = [];
   let coveredProvenanceSlots = 0;
+  const hasSource = (item: DpcFactorProvenance): boolean =>
+    typeof item.source === "string" && item.source.trim().length > 0;
   const add = (location: string, value?: DpcFactorProvenance | DpcFactorProvenance[]) => {
     if (Array.isArray(value) && value.length > 0) {
-      coveredProvenanceSlots += 1;
+      if (value.every(hasSource)) coveredProvenanceSlots += 1;
       value.forEach((item, index) => factorProvenance.push({
         location: `${location}[${index}]`, provenance: item,
       }));
     } else if (value !== undefined && !Array.isArray(value)) {
-      coveredProvenanceSlots += 1;
-      factorProvenance.push({ location, provenance: value as DpcFactorProvenance });
+      if (hasSource(value)) coveredProvenanceSlots += 1;
+      factorProvenance.push({ location, provenance: value });
     }
   };
 
