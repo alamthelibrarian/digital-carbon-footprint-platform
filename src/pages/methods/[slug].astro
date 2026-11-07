@@ -28,7 +28,7 @@ const { method } = Astro.props;
       </header>
       <section class="content">
         <p class="eyebrow">METHOD PROFILE</p>
-        <p class:listed={method.status === "planned"} class="status">{method.statusLabel}</p>
+        <p class:list={["status", method.status === "planned" && "listed"]}>{method.statusLabel}</p>
         <h1>{method.name}</h1>
         <p class="lead">{method.summary}</p>
         <div class="panel">
