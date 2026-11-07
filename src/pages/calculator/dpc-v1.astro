@@ -21,14 +21,14 @@
 
       <form id="calculator">
         <section class="panel">
-          <div class="panel-head"><div><p class="eyebrow">INVENTORY METADATA</p><h2>Assessment details</h2><p class="hint">These details are included in the downloadable calculation record.</p></div></div>
+          <div class="panel-head"><div><p class="eyebrow">INVENTORY METADATA</p><h2>Assessment details</h2><p class="hint">Complete the assessment scope and reporting period. Only categories you enable will be included in the calculation.</p></div></div>
           <div class="fields">
-            <label>Assessment / inventory name<input name="inventoryName" value="Digital preservation footprint assessment" /></label>
+            <label>Assessment / inventory name<input name="inventoryName" /></label>
             <label>Organization / unit<input name="organization" placeholder="Organization or department" /></label>
-            <label>Assessment subject<input name="subject" placeholder="What system, service, or activity is being assessed" required /></label>
-            <label>System boundary<input name="systemBoundary" placeholder="Describe included activities, infrastructure, and exclusions" required /></label>
-            <label>Functional unit<input name="functionalUnit" placeholder="e.g. annual operation of the digital repository" required /></label>
-            <label>Reporting period<input name="reportingPeriod" placeholder="e.g. 1 January–31 December 2025" required /></label>
+            <label>Assessment subject<input name="subject" required placeholder="What system, service, or activity is being assessed" required /></label>
+            <label>System boundary<input name="systemBoundary" required placeholder="Describe included activities, infrastructure, and exclusions" required /></label>
+            <label>Functional unit<input name="functionalUnit" required placeholder="e.g. annual operation of the digital repository" required /></label>
+            <label>Reporting period<input name="reportingPeriod" required placeholder="e.g. 1 January–31 December 2025" required /></label>
             <label>Geography<input name="geography" placeholder="Country, region, or site" /></label>
             <label>Prepared by<input name="preparedBy" placeholder="Name or role (optional)" /></label>
             <label>Period start<input name="periodStart" type="date" /></label>
@@ -36,37 +36,37 @@
           </div>
         </section>
         <section class="panel">
-          <div class="panel-head"><div><p class="eyebrow">01 / INFRASTRUCTURE</p><h2>On-premise equipment</h2></div><label class="toggle"><input type="checkbox" name="onEnabled" checked /> Include</label></div>
+          <div class="panel-head"><div><p class="eyebrow">01 / INFRASTRUCTURE</p><h2>On-premise equipment</h2></div><label class="toggle"><input type="checkbox" name="onEnabled" /> Include</label></div>
           <div class="fields">
             <label>Activity category<select name="onCategory"><option value="acquisition-transfer-ingest">Acquisition, transfer & ingest</option><option value="bitstream-preservation">Bitstream preservation</option><option value="content-preservation">Content preservation</option><option value="metadata-management">Metadata management</option><option value="discovery-access">Discovery & access</option></select></label>
-            <label>Machine / equipment name<input name="machineName" value="Example server" /></label>
-            <label>Idle power (W)<input name="idlePowerW" type="number" min="0" step="any" value="100" /></label>
-            <label>Maximum power (W)<input name="maxPowerW" type="number" min="0" step="any" value="200" /></label>
-            <label>Mean utilisation (0–1)<input name="meanUtilisation" type="number" min="0" max="1" step="any" value="0.5" /></label>
-            <label>Storage capacity (TB)<input name="storageCapacityTB" type="number" min="0" step="any" value="10" /></label>
-            <label>Storage intensity (Wh/TB/hour)<input name="storageEnergyWhPerTBh" type="number" min="0" step="any" value="0.5" /></label>
-            <label>PUE<input name="pue" type="number" min="0.000001" step="any" value="1.5" /></label>
-            <label>Grid factor (kgCO₂e/kWh)<input name="gridFactorKgCO2ePerKWh" type="number" min="0" step="any" value="0.45" /></label>
-            <label>Grid factor source<input name="gridFactorSource" value="Example source — replace with your source" /></label>
+            <label>Machine / equipment name<input name="machineName" /></label>
+            <label>Idle power (W)<input name="idlePowerW" type="number" min="0" step="any" /></label>
+            <label>Maximum power (W)<input name="maxPowerW" type="number" min="0" step="any" /></label>
+            <label>Mean utilisation (0–1)<input name="meanUtilisation" type="number" min="0" max="1" step="any" /></label>
+            <label>Storage capacity (TB)<input name="storageCapacityTB" type="number" min="0" step="any" /></label>
+            <label>Storage intensity (Wh/TB/hour)<input name="storageEnergyWhPerTBh" type="number" min="0" step="any" /></label>
+            <label>PUE<input name="pue" type="number" min="0.000001" step="any" /></label>
+            <label>Grid factor (kgCO₂e/kWh)<input name="gridFactorKgCO2ePerKWh" type="number" min="0" step="any" /></label>
+            <label>Grid factor source<input name="gridFactorSource" /></label>
             <label>Grid factor geography<input name="onFactorGeography" placeholder="Country / region / grid zone" /></label>
             <label>Grid factor reference year<input name="onFactorYear" type="number" min="1900" max="2100" placeholder="e.g. 2025" /></label>
-            <label>Activity data source<input name="onSource" value="Example measurements — replace with your source" /></label>
-            <label>Data confidence<select name="onConfidence"><option value="high">High</option><option value="medium" selected>Medium</option><option value="low">Low</option></select></label>
+            <label>Activity data source<input name="onSource" /></label>
+            <label>Data confidence<select name="onConfidence"><option value="" selected disabled>Select confidence</option><option value="high">High</option><option value="medium">Medium</option><option value="low">Low</option></select></label>
           </div>
         </section>
 
         <section class="panel">
           <div class="panel-head"><div><p class="eyebrow">02 / CLOUD SERVICES</p><h2>Cloud-hosted services</h2><p class="hint">Use annual emissions supplied by a provider or a documented external calculation.</p></div><label class="toggle"><input type="checkbox" name="cloudEnabled" /> Include</label></div>
           <div class="fields">
-            <label>Data centres / servers (kgCO₂e/year)<input name="cloudServerKg" type="number" min="0" step="any" value="0" /></label>
-            <label>Service name<input name="cloudServerName" value="Cloud server service" /></label>
-            <label>Source<input name="cloudServerSource" value="Provider report / external calculation" /></label>
-            <label>Networking (kgCO₂e/year)<input name="cloudNetworkKg" type="number" min="0" step="any" value="0" /></label>
-            <label>Networking service name<input name="cloudNetworkName" value="Cloud networking service" /></label>
-            <label>Source<input name="cloudNetworkSource" value="Provider report / external calculation" /></label>
+            <label>Data centres / servers (kgCO₂e/year)<input name="cloudServerKg" type="number" min="0" step="any" /></label>
+            <label>Service name<input name="cloudServerName" /></label>
+            <label>Source<input name="cloudServerSource" /></label>
+            <label>Networking (kgCO₂e/year)<input name="cloudNetworkKg" type="number" min="0" step="any" /></label>
+            <label>Networking service name<input name="cloudNetworkName" /></label>
+            <label>Source<input name="cloudNetworkSource" /></label>
             <label>Provider data geography<input name="cloudFactorGeography" placeholder="Provider region / country" /></label>
             <label>Provider data reference year<input name="cloudFactorYear" type="number" min="1900" max="2100" placeholder="e.g. 2025" /></label>
-            <label>Data confidence<select name="cloudConfidence"><option value="high">High</option><option value="medium" selected>Medium</option><option value="low">Low</option></select></label>
+            <label>Data confidence<select name="cloudConfidence"><option value="" selected disabled>Select confidence</option><option value="high">High</option><option value="medium">Medium</option><option value="low">Low</option></select></label>
           </div>
         </section>
 
@@ -74,34 +74,34 @@
           <div class="panel-head"><div><p class="eyebrow">03 / NETWORKING</p><h2>On-premise data transfer</h2></div><label class="toggle"><input type="checkbox" name="networkEnabled" /> Include</label></div>
           <div class="fields">
             <label>Activity category<select name="networkCategory"><option value="acquisition-transfer-ingest">Acquisition, transfer & ingest</option><option value="bitstream-preservation">Bitstream preservation</option><option value="content-preservation">Content preservation</option><option value="metadata-management">Metadata management</option><option value="discovery-access">Discovery & access</option></select></label>
-            <label>Activity name<input name="networkName" value="Example transfer" /></label>
-            <label>Transmitted data (MB/day)<input name="transmittedMBPerDay" type="number" min="0" step="any" value="1000" /></label>
-            <label>Received data (MB/day)<input name="receivedMBPerDay" type="number" min="0" step="any" value="500" /></label>
-            <label>Network intensity (kWh/GB)<input name="networkIntensity" type="number" min="0" step="any" value="0.0065" /></label>
-            <label>Grid factor (kgCO₂e/kWh)<input name="networkGridFactor" type="number" min="0" step="any" value="0.45" /></label>
-            <label>Grid factor source<input name="networkGridSource" value="Example source — replace with your source" /></label>
+            <label>Activity name<input name="networkName" /></label>
+            <label>Transmitted data (MB/day)<input name="transmittedMBPerDay" type="number" min="0" step="any" /></label>
+            <label>Received data (MB/day)<input name="receivedMBPerDay" type="number" min="0" step="any" /></label>
+            <label>Network intensity (kWh/GB)<input name="networkIntensity" type="number" min="0" step="any" /></label>
+            <label>Grid factor (kgCO₂e/kWh)<input name="networkGridFactor" type="number" min="0" step="any" /></label>
+            <label>Grid factor source<input name="networkGridSource" /></label>
             <label>Grid factor geography<input name="networkFactorGeography" placeholder="Country / region / grid zone" /></label>
             <label>Grid factor reference year<input name="networkFactorYear" type="number" min="1900" max="2100" placeholder="e.g. 2025" /></label>
             <label>Network intensity factor source<input name="networkIntensitySource" placeholder="Source for kWh/GB factor" /></label>
             <label>Network intensity reference year<input name="networkIntensityYear" type="number" min="1900" max="2100" placeholder="e.g. 2025" /></label>
-            <label>Activity data source<input name="networkSource" value="Example measurements — replace with your source" /></label>
-            <label>Data confidence<select name="networkConfidence"><option value="high">High</option><option value="medium" selected>Medium</option><option value="low">Low</option></select></label>
+            <label>Activity data source<input name="networkSource" /></label>
+            <label>Data confidence<select name="networkConfidence"><option value="" selected disabled>Select confidence</option><option value="high">High</option><option value="medium">Medium</option><option value="low">Low</option></select></label>
           </div>
         </section>
 
         <section class="panel">
           <div class="panel-head"><div><p class="eyebrow">04 / WEBSITE</p><h2>Website use</h2><p class="hint">The engine uses the midpoint of fixed-line and mobile energy-intensity inputs.</p></div><label class="toggle"><input type="checkbox" name="websiteEnabled" /> Include</label></div>
           <div class="fields">
-            <label>Average page size (KB)<input name="pageSizeKB" type="number" min="0" step="any" value="100" /></label>
-            <label>Annual visits<input name="annualVisits" type="number" min="0" step="any" value="10000" /></label>
-            <label>Average download size (MB)<input name="downloadSizeMB" type="number" min="0" step="any" value="5" /></label>
-            <label>Annual downloads<input name="annualDownloads" type="number" min="0" step="any" value="1000" /></label>
-            <label>Fixed-line intensity (kWh/GB)<input name="fixedIntensity" type="number" min="0" step="any" value="0.0065" /></label>
-            <label>Mobile intensity (kWh/GB)<input name="mobileIntensity" type="number" min="0" step="any" value="0.1" /></label>
-            <label>Fixed-line factor source<input name="fixedSource" value="Document the source used" /></label>
-            <label>Mobile factor source<input name="mobileSource" value="Document the source used" /></label>
-            <label>Mean grid factor (kgCO₂e/kWh)<input name="websiteGridFactor" type="number" min="0" step="any" value="0.45" /></label>
-            <label>Grid factor source<input name="websiteGridSource" value="Document the source used" /></label>
+            <label>Average page size (KB)<input name="pageSizeKB" type="number" min="0" step="any" /></label>
+            <label>Annual visits<input name="annualVisits" type="number" min="0" step="any" /></label>
+            <label>Average download size (MB)<input name="downloadSizeMB" type="number" min="0" step="any" /></label>
+            <label>Annual downloads<input name="annualDownloads" type="number" min="0" step="any" /></label>
+            <label>Fixed-line intensity (kWh/GB)<input name="fixedIntensity" type="number" min="0" step="any" /></label>
+            <label>Mobile intensity (kWh/GB)<input name="mobileIntensity" type="number" min="0" step="any" /></label>
+            <label>Fixed-line factor source<input name="fixedSource" /></label>
+            <label>Mobile factor source<input name="mobileSource" /></label>
+            <label>Mean grid factor (kgCO₂e/kWh)<input name="websiteGridFactor" type="number" min="0" step="any" /></label>
+            <label>Grid factor source<input name="websiteGridSource" /></label>
             <label>Factor geography<input name="websiteFactorGeography" placeholder="Global / country / region" /></label>
             <label>Factor reference year<input name="websiteFactorYear" type="number" min="1900" max="2100" placeholder="e.g. 2025" /></label>
           </div>
@@ -110,14 +110,14 @@
         <section class="panel">
           <div class="panel-head"><div><p class="eyebrow">05 / TRAVEL</p><h2>Travel emissions</h2><p class="hint">Enter a total from a documented travel emissions source, in kilograms CO₂e.</p></div><label class="toggle"><input type="checkbox" name="travelEnabled" /> Include</label></div>
           <div class="fields">
-            <label>Travel description<input name="travelDescription" value="Example trip" /></label>
-            <label>Emissions (kgCO₂e)<input name="travelKg" type="number" min="0" step="any" value="0" /></label>
-            <label>Source<input name="travelSource" value="External travel emissions calculator / report" /></label>
+            <label>Travel description<input name="travelDescription" /></label>
+            <label>Emissions (kgCO₂e)<input name="travelKg" type="number" min="0" step="any" /></label>
+            <label>Source<input name="travelSource" /></label>
             <label>Source geography<input name="travelGeography" placeholder="Country / region" /></label>
             <label>Source reference year<input name="travelYear" type="number" min="1900" max="2100" placeholder="e.g. 2025" /></label>
           </div>
         </section>
-        <div class="submit-row"><p>Example values are illustrative. Replace all values and source descriptions with evidence from your own inventory.</p><button type="submit">Calculate footprint ↗</button></div>
+        <div class="submit-row"><p>No activity or emission-factor values are prefilled. Enter evidence from your own inventory; illustrative values must not be treated as measured data.</p><button type="submit">Calculate footprint ↗</button></div>
       </form>
 
       <section id="results" class="results" hidden aria-live="polite">
@@ -140,8 +140,21 @@
   const results = document.querySelector<HTMLElement>("#results")!;
   const error = document.querySelector<HTMLElement>("#error")!;
   const field = (name: string) => form.elements.namedItem(name) as HTMLInputElement;
-  const number = (name: string): number => Number(field(name).value);
   const value = (name: string): string => field(name).value.trim();
+  const requiredText = (name: string, label: string): string => {
+    const current = value(name);
+    if (!current) throw new TypeError(`${label} is required for an included category.`);
+    return current;
+  };
+  const number = (name: string): number => {
+    const raw = value(name);
+    if (!raw) throw new TypeError(`${field(name).labels?.[0]?.textContent?.trim() || name} is required.`);
+    const parsed = Number(raw);
+    if (!Number.isFinite(parsed) || parsed < 0) {
+      throw new RangeError(`${name} must be a finite, non-negative number.`);
+    }
+    return parsed;
+  };
   const enabled = (name: string): boolean => field(name).checked;
   const format = (n: number): string => new Intl.NumberFormat("en-US", { maximumFractionDigits: 3 }).format(n);
   let latestRecord: Record<string, any> | null = null;
@@ -152,9 +165,16 @@
     try {
       const periodStart = value("periodStart");
       const periodEnd = value("periodEnd");
+      if (Boolean(periodStart) !== Boolean(periodEnd)) {
+        throw new TypeError("Enter both assessment period start and end dates, or leave both blank.");
+      }
       if (periodStart && periodEnd && periodEnd < periodStart) {
         throw new RangeError("Assessment period end must be on or after the start date.");
       }
+      requiredText("subject", "Assessment subject");
+      requiredText("systemBoundary", "System boundary");
+      requiredText("functionalUnit", "Functional unit");
+      requiredText("reportingPeriod", "Reporting period");
       const metadata = {
         assessmentName: value("inventoryName"),
         organization: value("organization") || null,
@@ -164,7 +184,12 @@
         periodEnd: periodEnd || null
       };
       const input: any = {};
-      if (enabled("onEnabled")) input.onPremise = [{
+      if (enabled("onEnabled")) {
+        requiredText("machineName", "Machine / equipment name");
+        requiredText("gridFactorSource", "On-premise grid factor source");
+        requiredText("onSource", "On-premise activity data source");
+        requiredText("onConfidence", "On-premise data confidence");
+        input.onPremise = [{
         category: value("onCategory"), machineName: value("machineName"),
         idlePowerW: number("idlePowerW"), maxPowerW: number("maxPowerW"),
         meanUtilisation: number("meanUtilisation"), storageCapacityTB: number("storageCapacityTB"),
@@ -173,12 +198,26 @@
         gridFactorSource: value("gridFactorSource"), source: value("onSource"),
         confidence: value("onConfidence"),
         factorProvenance: { factor: "electricity-grid", value: number("gridFactorKgCO2ePerKWh"), unit: "kgCO2e/kWh", source: value("gridFactorSource"), geography: value("onFactorGeography") || null, referenceYear: value("onFactorYear") ? number("onFactorYear") : null, dataQuality: value("onConfidence") }
-      }];
-      if (enabled("cloudEnabled")) input.cloud = [
+        }];
+      }
+      if (enabled("cloudEnabled")) {
+        requiredText("cloudServerName", "Cloud data-centre / server service name");
+        requiredText("cloudServerSource", "Cloud data-centre / server source");
+        requiredText("cloudNetworkName", "Cloud networking service name");
+        requiredText("cloudNetworkSource", "Cloud networking source");
+        requiredText("cloudConfidence", "Cloud data confidence");
+        input.cloud = [
         { category: "data-centres-servers", serviceName: value("cloudServerName"), annualEmissionsKgCO2e: number("cloudServerKg"), source: value("cloudServerSource"), confidence: value("cloudConfidence"), factorProvenance: { factor: "provider-reported-emissions", unit: "kgCO2e/year", source: value("cloudServerSource"), geography: value("cloudFactorGeography") || null, referenceYear: value("cloudFactorYear") ? number("cloudFactorYear") : null, dataQuality: value("cloudConfidence") } },
         { category: "networking", serviceName: value("cloudNetworkName"), annualEmissionsKgCO2e: number("cloudNetworkKg"), source: value("cloudNetworkSource"), confidence: value("cloudConfidence"), factorProvenance: { factor: "provider-reported-emissions", unit: "kgCO2e/year", source: value("cloudNetworkSource"), geography: value("cloudFactorGeography") || null, referenceYear: value("cloudFactorYear") ? number("cloudFactorYear") : null, dataQuality: value("cloudConfidence") } }
-      ];
-      if (enabled("networkEnabled")) input.networking = [{
+        ];
+      }
+      if (enabled("networkEnabled")) {
+        requiredText("networkName", "Networking activity name");
+        requiredText("networkGridSource", "Networking grid factor source");
+        requiredText("networkIntensitySource", "Network energy-intensity source");
+        requiredText("networkSource", "Networking activity data source");
+        requiredText("networkConfidence", "Networking data confidence");
+        input.networking = [{
         category: value("networkCategory"), activityName: value("networkName"),
         transmittedMBPerDay: number("transmittedMBPerDay"), receivedMBPerDay: number("receivedMBPerDay"),
         networkEnergyIntensityKWhPerGB: number("networkIntensity"),
@@ -189,8 +228,13 @@
           { factor: "electricity-grid", value: number("networkGridFactor"), unit: "kgCO2e/kWh", source: value("networkGridSource"), geography: value("networkFactorGeography") || null, referenceYear: value("networkFactorYear") ? number("networkFactorYear") : null, dataQuality: value("networkConfidence") },
           { factor: "network-energy-intensity", value: number("networkIntensity"), unit: "kWh/GB", source: value("networkIntensitySource") || null, referenceYear: value("networkIntensityYear") ? number("networkIntensityYear") : null, dataQuality: value("networkConfidence") }
         ]
-      }];
-      if (enabled("websiteEnabled")) input.websiteUse = {
+        }];
+      }
+      if (enabled("websiteEnabled")) {
+        requiredText("fixedSource", "Fixed-line intensity source");
+        requiredText("mobileSource", "Mobile intensity source");
+        requiredText("websiteGridSource", "Website grid factor source");
+        input.websiteUse = {
         averagePageSizeKB: number("pageSizeKB"), annualVisits: number("annualVisits"),
         averageDownloadSizeMB: number("downloadSizeMB"), annualDownloads: number("annualDownloads"),
         fixedLineIntensityKWhPerGB: number("fixedIntensity"), mobileIntensityKWhPerGB: number("mobileIntensity"),
@@ -201,18 +245,26 @@
           { factor: "mobile-network-intensity", value: number("mobileIntensity"), unit: "kWh/GB", source: value("mobileSource"), geography: value("websiteFactorGeography") || null, referenceYear: value("websiteFactorYear") ? number("websiteFactorYear") : null },
           { factor: "mean-global-grid", value: number("websiteGridFactor"), unit: "kgCO2e/kWh", source: value("websiteGridSource"), geography: value("websiteFactorGeography") || null, referenceYear: value("websiteFactorYear") ? number("websiteFactorYear") : null }
         ]
-      };
-      if (enabled("travelEnabled")) input.travel = [{
+        };
+      }
+      if (enabled("travelEnabled")) {
+        requiredText("travelDescription", "Travel description");
+        requiredText("travelSource", "Travel emissions source");
+        input.travel = [{
         description: value("travelDescription"), emissionsKgCO2e: number("travelKg"), source: value("travelSource"),
         factorProvenance: { factor: "travel-emissions-calculation", value: number("travelKg"), unit: "kgCO2e/trip", source: value("travelSource"), geography: value("travelGeography") || null, referenceYear: value("travelYear") ? number("travelYear") : null }
-      }];
+        }];
+      }
 
+      if (!Object.keys(input).length) {
+        throw new TypeError("Enable at least one activity category before calculating.");
+      }
       const result = calculateDpcV1(input);
       const createdAt = new Date().toISOString();
       const envelope = adaptDpcV1Result(input, result, {
         id: crypto.randomUUID(),
         createdAt,
-        title: metadata.assessmentName,
+        ...(metadata.assessmentName ? { title: metadata.assessmentName } : {}),
         subject: value("subject"),
         systemBoundary: value("systemBoundary"),
         functionalUnit: value("functionalUnit"),
