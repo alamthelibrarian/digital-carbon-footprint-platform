@@ -196,6 +196,27 @@ function validateConfidence(confidence: DpcConfidence): void {
   }
 }
 
+function validateFactorProvenance(entry: DpcFactorProvenance): void {
+  requireText("factorProvenance.factor", entry.factor);
+  requireText("factorProvenance.unit", entry.unit);
+  if (entry.value !== undefined) requireNonNegative("factorProvenance.value", entry.value);
+  if (entry.source !== undefined && entry.source !== null) requireText("factorProvenance.source", entry.source);
+  if (entry.geography !== undefined && entry.geography !== null) requireText("factorProvenance.geography", entry.geography);
+  if (entry.referenceYear !== undefined && entry.referenceYear !== null) {
+    if (!Number.isInteger(entry.referenceYear) || entry.referenceYear < 1) {
+      throw new RangeError("factorProvenance.referenceYear must be a positive integer.");
+    }
+  }
+  if (entry.dataQuality !== undefined) validateConfidence(entry.dataQuality);
+}
+
+function validateOptionalFactorProvenance(
+  provenance: DpcFactorProvenance | DpcFactorProvenance[] | undefined,
+): void {
+  if (Array.isArray(provenance)) provenance.forEach(validateFactorProvenance);
+  else if (provenance !== undefined) validateFactorProvenance(provenance);
+}
+
 function sum(values: number[]): number {
   return values.reduce((total, value) => total + value, 0);
 }
@@ -218,6 +239,7 @@ export function calculateOnPremiseRow(input: DpcOnPremiseInput): DpcOnPremiseRes
   requireText("gridFactorSource", input.gridFactorSource);
   requireText("source", input.source);
   validateConfidence(input.confidence);
+  validateOptionalFactorProvenance(input.factorProvenance);
 
   const serverPowerW = ((input.maxPowerW - input.idlePowerW) * input.meanUtilisation) + input.idlePowerW;
   const storagePowerW = input.storageCapacityTB * input.storageEnergyWhPerTBh;
@@ -257,6 +279,7 @@ export function calculateNetworkingRow(input: DpcNetworkingInput): DpcNetworking
   requireText("gridFactorSource", input.gridFactorSource);
   requireText("source", input.source);
   validateConfidence(input.confidence);
+  validateOptionalFactorProvenance(input.factorProvenance);
 
   const dataVolumeGBPerDay = (input.transmittedMBPerDay + input.receivedMBPerDay) / 1000;
   // Deliberately preserve the source workbook's 365/12 multiplier for parity.
@@ -294,6 +317,7 @@ export function calculateWebsiteUse(input: DpcWebsiteUseInput) {
   requireText("fixedLineIntensitySource", input.fixedLineIntensitySource);
   requireText("mobileIntensitySource", input.mobileIntensitySource);
   requireText("gridFactorSource", input.gridFactorSource);
+  validateOptionalFactorProvenance(input.factorProvenance);
   const dataVolumeGB = (
     (input.averagePageSizeKB / 1000) * input.annualVisits
     + input.averageDownloadSizeMB * input.annualDownloads
@@ -336,6 +360,7 @@ export function calculateTravelRow(input: DpcTravelInput) {
   }
   requireText("description", input.description);
   requireText("source", input.source);
+  validateOptionalFactorProvenance(input.factorProvenance);
   const value = hasTonnes ? input.emissionsTCO2e! * 1000 : input.emissionsKgCO2e!;
   requireNonNegative("travel emissions", value);
   requireFiniteResult("travel emissions", value);
@@ -359,6 +384,7 @@ export function calculateDpcV1(input: DpcCalculationInput): DpcCalculationResult
     requireText("serviceName", row.serviceName);
     requireText("source", row.source);
     validateConfidence(row.confidence);
+    validateOptionalFactorProvenance(row.factorProvenance);
   }
   const networking = (input.networking ?? []).map(calculateNetworkingRow);
   const websiteUse = input.websiteUse ? calculateWebsiteUse(input.websiteUse) : null;
