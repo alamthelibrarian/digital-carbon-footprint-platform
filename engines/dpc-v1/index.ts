@@ -160,6 +160,18 @@ function validateCategory(category: DpcActivityCategory): void {
   }
 }
 
+function requireText(name: string, value: string): void {
+  if (typeof value !== "string" || value.trim().length === 0) {
+    throw new TypeError(`${name} must be a non-empty string.`);
+  }
+}
+
+function validateConfidence(confidence: DpcConfidence): void {
+  if (!["high", "medium", "low"].includes(confidence)) {
+    throw new RangeError("confidence must be high, medium, or low.");
+  }
+}
+
 function sum(values: number[]): number {
   return values.reduce((total, value) => total + value, 0);
 }
@@ -178,7 +190,10 @@ export function calculateOnPremiseRow(input: DpcOnPremiseInput): DpcOnPremiseRes
   if (input.maxPowerW < input.idlePowerW) throw new RangeError("maxPowerW cannot be lower than idlePowerW.");
   if (input.meanUtilisation > 1) throw new RangeError("meanUtilisation must be a fraction between 0 and 1.");
   if (input.pue <= 0) throw new RangeError("pue must be greater than zero.");
-  if (!input.gridFactorSource.trim() || !input.source.trim()) throw new TypeError("Factor source and activity source are required.");
+  requireText("machineName", input.machineName);
+  requireText("gridFactorSource", input.gridFactorSource);
+  requireText("source", input.source);
+  validateConfidence(input.confidence);
 
   const serverPowerW = ((input.maxPowerW - input.idlePowerW) * input.meanUtilisation) + input.idlePowerW;
   const storagePowerW = input.storageCapacityTB * input.storageEnergyWhPerTBh;
@@ -210,7 +225,10 @@ export function calculateNetworkingRow(input: DpcNetworkingInput): DpcNetworking
     networkEnergyIntensityKWhPerGB: input.networkEnergyIntensityKWhPerGB,
     gridFactorKgCO2ePerKWh: input.gridFactorKgCO2ePerKWh,
   })) requireNonNegative(name, value);
-  if (!input.gridFactorSource.trim() || !input.source.trim()) throw new TypeError("Factor source and activity source are required.");
+  requireText("activityName", input.activityName);
+  requireText("gridFactorSource", input.gridFactorSource);
+  requireText("source", input.source);
+  validateConfidence(input.confidence);
 
   const dataVolumeGBPerDay = (input.transmittedMBPerDay + input.receivedMBPerDay) / 1000;
   // Deliberately preserve the source workbook's 365/12 multiplier for parity.
@@ -235,9 +253,9 @@ export function calculateWebsiteUse(input: DpcWebsiteUseInput) {
   for (const [name, value] of Object.entries(input)) {
     if (typeof value === "number") requireNonNegative(name, value);
   }
-  if (!input.fixedLineIntensitySource.trim() || !input.mobileIntensitySource.trim() || !input.gridFactorSource.trim()) {
-    throw new TypeError("Website-use factor sources are required.");
-  }
+  requireText("fixedLineIntensitySource", input.fixedLineIntensitySource);
+  requireText("mobileIntensitySource", input.mobileIntensitySource);
+  requireText("gridFactorSource", input.gridFactorSource);
   const dataVolumeGB = (
     (input.averagePageSizeKB / 1000) * input.annualVisits
     + input.averageDownloadSizeMB * input.annualDownloads
@@ -271,7 +289,8 @@ export function calculateTravelRow(input: DpcTravelInput) {
   if (hasTonnes === hasKilograms) {
     throw new TypeError("Provide exactly one of emissionsTCO2e or emissionsKgCO2e.");
   }
-  if (!input.source.trim()) throw new TypeError("Travel emissions source is required.");
+  requireText("description", input.description);
+  requireText("source", input.source);
   const value = hasTonnes ? input.emissionsTCO2e! * 1000 : input.emissionsKgCO2e!;
   requireNonNegative("travel emissions", value);
   return {
@@ -287,7 +306,9 @@ export function calculateDpcV1(input: DpcCalculationInput): DpcCalculationResult
   const cloud = input.cloud ?? [];
   for (const row of cloud) {
     requireNonNegative("annualEmissionsKgCO2e", row.annualEmissionsKgCO2e);
-    if (!row.source.trim()) throw new TypeError("Cloud emissions source is required.");
+    requireText("serviceName", row.serviceName);
+    requireText("source", row.source);
+    validateConfidence(row.confidence);
   }
   const networking = (input.networking ?? []).map(calculateNetworkingRow);
   const websiteUse = input.websiteUse ? calculateWebsiteUse(input.websiteUse) : null;
