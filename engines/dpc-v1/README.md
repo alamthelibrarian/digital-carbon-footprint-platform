@@ -34,7 +34,7 @@ The web calculator records provenance alongside the submitted inputs in its down
 ## Validation still required
 
 - Regression comparison against Excel-calculated workbook outputs.
-- Complete coverage of empty rows, zero values, invalid units, missing inputs, and edge cases. Current tests cover empty assessments, zero-valued activity inputs, multiple activity rows, and rejection of non-finite derived results caused by numeric overflow.
+- Complete coverage of empty rows, zero values, invalid units, missing inputs, and edge cases. Current tests cover empty assessments, zero-valued activity inputs, multiple activity rows, negative and non-finite activity inputs across categories, blank evidence/source fields, and rejection of non-finite derived results caused by numeric overflow.
 - Verification of every formula and category mapping against the authoritative publication/workbook.
 - Review of factor provenance, geography, reference periods, and reuse rights.
 - Review by an independent domain expert before any claim of validation.
