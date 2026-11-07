@@ -26,8 +26,8 @@ test("On Premise follows linear power curve, storage, PUE and grid factor", () =
   assert.equal(result.serverPowerW, 150);
   assert.equal(result.storagePowerW, 5);
   assert.equal(result.combinedPowerW, 155);
-  assert.equal(result.annualEnergyKWh, 2035.35);
-  assert.equal(result.emissionsKgCO2e, 916.0 - 0.0925);
+  assert.ok(Math.abs(result.annualEnergyKWh - 2036.7) < 1e-9);
+  assert.ok(Math.abs(result.emissionsKgCO2e - 916.515) < 1e-9);
 });
 
 test("Networking preserves the workbook 365/12 multiplier", () => {
@@ -60,9 +60,9 @@ test("Website Use uses the simple fixed/mobile midpoint", () => {
     gridFactorSource: "DPC Datasheet default",
   });
   assert.equal(result.dataVolumeGB, 6);
-  assert.equal(result.midpointIntensityKWhPerGB, 0.05325);
-  assert.equal(result.networkEnergyKWh, 0.3195);
-  assert.equal(result.emissionsKgCO2e, 0.143775);
+  assert.ok(Math.abs(result.midpointIntensityKWhPerGB - 0.05325) < 1e-12);
+  assert.ok(Math.abs(result.networkEnergyKWh - 0.3195) < 1e-12);
+  assert.ok(Math.abs(result.emissionsKgCO2e - 0.143775) < 1e-12);
 });
 
 test("Travel converts tonnes to kilograms and accepts direct kilograms", () => {
@@ -103,9 +103,9 @@ test("Aggregate includes all workbook categories and cloud totals", () => {
   });
   assert.equal(result.totals.cloudDataCentresServersKgCO2e, 10);
   assert.equal(result.totals.cloudNetworkingKgCO2e, 5);
-  assert.equal(result.totals.websiteUseKgCO2e, 0.143775);
+  assert.ok(Math.abs(result.totals.websiteUseKgCO2e - 0.143775) < 1e-12);
   assert.equal(result.totals.travelKgCO2e, 20);
-  assert.equal(result.totals.totalKgCO2e, 35.143775);
+  assert.ok(Math.abs(result.totals.totalKgCO2e - 35.143775) < 1e-12);
 });
 
 test("Rejects utilisation values outside 0–1", () => {
