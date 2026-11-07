@@ -2,6 +2,8 @@
 
 An open-source, multi-method platform for digital carbon footprint calculation, analysis, and reporting.
 
+[![CI](https://github.com/alamthelibrarian/digital-carbon-footprint-platform/actions/workflows/ci.yml/badge.svg)](https://github.com/alamthelibrarian/digital-carbon-footprint-platform/actions/workflows/ci.yml) [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](./LICENSE)
+
 > **Project status:** Early development. The first calculation engine is an independent implementation based on the Digital Preservation Coalition (DPC) Carbon Footprint Toolkit v1.0. It is under development and has not yet been validated against the source workbook. Other methods are roadmap items, not implemented engines.
 
 ## Project scope
