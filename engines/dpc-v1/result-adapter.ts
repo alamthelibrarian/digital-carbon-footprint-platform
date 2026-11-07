@@ -77,9 +77,9 @@ export function adaptDpcV1Result(
       value.forEach((item, index) => factorProvenance.push({
         location: `${location}[${index}]`, provenance: item,
       }));
-    } else if (value) {
+    } else if (value !== undefined && !Array.isArray(value)) {
       coveredProvenanceSlots += 1;
-      factorProvenance.push({ location, provenance: value });
+      factorProvenance.push({ location, provenance: value as DpcFactorProvenance });
     }
   };
 
