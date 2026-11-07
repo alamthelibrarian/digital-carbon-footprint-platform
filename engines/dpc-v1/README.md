@@ -22,6 +22,11 @@ The implementation does not include or redistribute the original DPC workbook, i
 The Astro interface at `/calculator/dpc-v1/` consumes this engine directly. Each activity group can be included or excluded. The interface displays the annual total, category breakdown, and calculation details, and supports printing the result. Example values are prefilled for demonstration and must be replaced with evidence-based inputs. The interface does not save calculations on a server. It supports a user-initiated JSON download containing assessment metadata, submitted inputs, calculation outputs, and limitations. The JSON file is a portable record, not a validated reporting template.
 
 
+
+### Typed factor provenance
+
+The DPC engine accepts optional `factorProvenance` metadata on on-premise, cloud, networking, website-use, and travel inputs. Provenance includes a factor identifier, unit, optional numeric value, source, geography, reference year, and optional data-quality rating. The calculation engine carries this metadata into the corresponding result objects; it does not use provenance fields in the arithmetic. This keeps evidence traceable without changing the DPC v1.0 formulas. Missing geography or reference years are not inferred.
+
 ### Factor provenance in the web record
 
 The web calculator records provenance alongside the submitted inputs in its downloadable JSON record. Available fields include factor/source description, unit, geography or provider region, reference year, and the selected confidence level where the activity category provides one. Network energy-intensity sources are captured separately from electricity-grid-factor sources. These fields document user-supplied evidence; the platform does not verify source accuracy, infer missing geography or years, or supply country-specific defaults. Blank optional geography/year fields remain null or absent and should be completed when the underlying source provides that information.
