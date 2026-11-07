@@ -28,7 +28,7 @@ This project is an independent software implementation based on the DPC toolkit.
 
 - **Astro + TypeScript:** web application and platform layer.
 - **Method-specific engines:** isolated implementations with explicit method versions and calculation contracts.
-- **Shared services:** validation, source and emission-factor provenance, reporting, and export.
+- **Shared services:** validation, source and emission-factor provenance, reporting, and export. The initial method-aware factor catalogue contract is defined in `src/lib/emission-factors.ts`; it contains no bundled factor values or country defaults.
 - **Transparent results:** each result records its method, version, functional unit, system boundary, reporting period, assumptions, data quality, and limitations.
 
 Results from different methodologies are not automatically comparable. Any comparison or aggregation will require documented harmonization.
