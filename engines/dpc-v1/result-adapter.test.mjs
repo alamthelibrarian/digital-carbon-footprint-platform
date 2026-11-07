@@ -159,7 +159,7 @@ test("does not count a row as provenance-covered when any factor source is missi
       confidence: "high",
       factorProvenance: [
         { factor: "electricity-grid", unit: "kgCO2e/kWh", source: "Grid dataset" },
-        { factor: "network-energy-intensity", unit: "kWh/GB", source: " " },
+        { factor: "network-energy-intensity", unit: "kWh/GB", source: null },
       ],
     }],
   };
