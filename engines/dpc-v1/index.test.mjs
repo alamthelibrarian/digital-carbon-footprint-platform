@@ -517,3 +517,55 @@ test("Rejects numeric strings in website calculation inputs", () => {
     gridFactorSource: "Test source",
   }), /finite, non-negative number/);
 });
+
+
+test("Validates factor provenance metadata without changing calculation inputs", () => {
+  const base = {
+    category: "bitstream-preservation",
+    machineName: "Provenance server",
+    idlePowerW: 10,
+    maxPowerW: 20,
+    meanUtilisation: 0.5,
+    storageCapacityTB: 1,
+    storageEnergyWhPerTBh: 0.5,
+    pue: 1,
+    gridFactorKgCO2ePerKWh: 0.4,
+    gridFactorSource: "Grid dataset",
+    source: "Meter readings",
+    confidence: "high",
+  };
+  assert.throws(() => calculateOnPremiseRow({
+    ...base,
+    factorProvenance: { factor: " ", unit: "kgCO2e/kWh", source: "Dataset" },
+  }), /factorProvenance.factor must be a non-empty string/);
+  assert.throws(() => calculateOnPremiseRow({
+    ...base,
+    factorProvenance: { factor: "grid", unit: "", source: "Dataset" },
+  }), /factorProvenance.unit must be a non-empty string/);
+  assert.throws(() => calculateOnPremiseRow({
+    ...base,
+    factorProvenance: { factor: "grid", unit: "kgCO2e/kWh", value: Number.NaN, source: "Dataset" },
+  }), /factorProvenance.value must be a finite, non-negative number/);
+  assert.throws(() => calculateOnPremiseRow({
+    ...base,
+    factorProvenance: { factor: "grid", unit: "kgCO2e/kWh", value: 0.4, source: "Dataset", referenceYear: 2025.5 },
+  }), /referenceYear must be a positive integer/);
+  assert.throws(() => calculateOnPremiseRow({
+    ...base,
+    factorProvenance: { factor: "grid", unit: "kgCO2e/kWh", source: "Dataset", dataQuality: "unknown" },
+  }), /confidence must be high, medium, or low/);
+
+  const valid = calculateOnPremiseRow({
+    ...base,
+    factorProvenance: {
+      factor: "grid-electricity",
+      value: 0.4,
+      unit: "kgCO2e/kWh",
+      source: "Grid dataset",
+      geography: "Example region",
+      referenceYear: 2025,
+      dataQuality: "high",
+    },
+  });
+  assert.equal(valid.emissionsKgCO2e, 175.2);
+});
