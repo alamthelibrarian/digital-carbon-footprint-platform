@@ -1,6 +1,6 @@
 # Calculation Result Contract
 
-**Status:** Proposed shared platform contract. The current DPC v1.0 engine returns a method-specific result object; it has not yet been adapted to this common envelope.
+**Status:** Version 1.0 envelope defined; the DPC v1.0 adapter is implemented in `engines/dpc-v1/result-adapter.ts`. Persistence and adapters for other methods are not implemented.
 
 ## Purpose
 
@@ -64,7 +64,13 @@ Passing unit tests or a successful software build does not, by itself, establish
 
 The current DPC engine already returns method identifier, method version, one-year reference period, limitations, activity-category results, factor provenance on relevant input/result rows, and totals in kgCO2e. It does not yet provide the complete shared envelope described above. In particular, assessment identity, system boundary, functional unit as a structured field, schema version, calculation traceability, and a unified metric list remain future integration work.
 
-The DPC engine's current result shape should not be changed merely to make it look generic. Introduce an explicit adapter when the shared result contract is implemented, preserving the original method-specific result for auditability.
+The DPC engine's native result shape remains unchanged. `adaptDpcV1Result(input, result, metadata)` wraps it in the shared envelope and retains the complete native result under `results.native`. Assessment scope metadata must be supplied by the caller; the adapter does not invent a functional unit, system boundary, geography, or reporting period.
+
+## DPC v1.0 adapter mapping
+
+The current adapter emits schema version `1.0`, assessment metadata, method identity, caller-supplied scope, original inputs, native DPC output, seven kgCO2e metrics, factor-provenance entries with input locations, activity confidence values, provenance coverage status, assumptions, limitations, and engine traceability. Its timestamp is supplied by the caller to keep the adapter deterministic. Provenance coverage is a structural indicator only; it does not assess scientific quality or verify source accuracy.
+
+The adapter requires an explicit assessment ID, UTC ISO 8601 creation timestamp, subject, system boundary, functional unit, and reporting period. It preserves the native DPC one-year reference period separately from the caller's reporting-period label.
 
 ## Compatibility rule
 
