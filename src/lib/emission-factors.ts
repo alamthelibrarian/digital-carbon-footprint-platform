@@ -77,7 +77,7 @@ const isNonEmptyString = (value: unknown): value is string =>
   typeof value === "string" && value.trim().length > 0;
 
 const validYear = (value: unknown): value is number =>
-  Number.isInteger(value) && (value as number) >= 1900 && (value as number) <= 2100;
+  typeof value === "number" && Number.isInteger(value) && value >= 1900 && value <= 2100;
 
 const validDate = (value: unknown): value is string =>
   typeof value === "string"
