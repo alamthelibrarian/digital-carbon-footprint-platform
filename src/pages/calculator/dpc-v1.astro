@@ -109,6 +109,8 @@
             <label>Travel description<input name="travelDescription" value="Example trip" /></label>
             <label>Emissions (kgCO₂e)<input name="travelKg" type="number" min="0" step="any" value="0" /></label>
             <label>Source<input name="travelSource" value="External travel emissions calculator / report" /></label>
+            <label>Source geography<input name="travelGeography" placeholder="Country / region" /></label>
+            <label>Source reference year<input name="travelYear" type="number" min="1900" max="2100" placeholder="e.g. 2025" /></label>
           </div>
         </section>
         <div class="submit-row"><p>Example values are illustrative. Replace all values and source descriptions with evidence from your own inventory.</p><button type="submit">Calculate footprint ↗</button></div>
@@ -196,7 +198,8 @@
         ]
       };
       if (enabled("travelEnabled")) input.travel = [{
-        description: value("travelDescription"), emissionsKgCO2e: number("travelKg"), source: value("travelSource")
+        description: value("travelDescription"), emissionsKgCO2e: number("travelKg"), source: value("travelSource"),
+        factorProvenance: { factor: "travel-emissions-calculation", value: number("travelKg"), unit: "kgCO2e/trip", source: value("travelSource"), geography: value("travelGeography") || null, referenceYear: value("travelYear") ? number("travelYear") : null }
       }];
 
       const result = calculateDpcV1(input);
