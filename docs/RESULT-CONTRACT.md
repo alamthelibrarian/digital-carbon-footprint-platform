@@ -1,6 +1,6 @@
 # Calculation Result Contract
 
-**Status:** Version 1.0 envelope defined; the DPC v1.0 adapter is implemented in `engines/dpc-v1/result-adapter.ts`. Persistence and adapters for other methods are not implemented.
+**Status:** Method-neutral TypeScript envelope v1.0 is defined in `src/lib/result-contract.ts`; the DPC v1.0 adapter is implemented in `engines/dpc-v1/result-adapter.ts`. Persistence and adapters for other methods are not implemented.
 
 ## Purpose
 
@@ -9,6 +9,8 @@ Every calculation engine should return results that can be stored, inspected, ex
 Each method retains its own equations, categories, factor rules, boundaries, and interpretation. The platform must never merge method-specific results into a common total unless a documented harmonisation procedure justifies it.
 
 ## Required result envelope
+
+The generic TypeScript contract is `DcfpResultEnvelope<TInput, TNativeResult, TProvenance>`. Input, native result, and factor-provenance types remain method-specific through generics; the envelope does not force all methods into identical calculation data.
 
 A future platform-level result should contain the following sections:
 
