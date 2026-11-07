@@ -15,6 +15,16 @@ export type DpcActivityCategory =
 
 export type DpcConfidence = "high" | "medium" | "low";
 
+export interface DpcFactorProvenance {
+  factor: string;
+  value?: number;
+  unit: string;
+  source?: string | null;
+  geography?: string | null;
+  referenceYear?: number | null;
+  dataQuality?: DpcConfidence;
+}
+
 export interface DpcOnPremiseInput {
   category: DpcActivityCategory;
   machineName: string;
@@ -28,6 +38,7 @@ export interface DpcOnPremiseInput {
   gridFactorSource: string;
   source: string;
   confidence: DpcConfidence;
+  factorProvenance?: DpcFactorProvenance;
   notes?: string;
 }
 
@@ -37,6 +48,7 @@ export interface DpcCloudInput {
   annualEmissionsKgCO2e: number;
   source: string;
   confidence: DpcConfidence;
+  factorProvenance?: DpcFactorProvenance;
   notes?: string;
 }
 
@@ -50,6 +62,7 @@ export interface DpcNetworkingInput {
   gridFactorSource: string;
   source: string;
   confidence: DpcConfidence;
+  factorProvenance?: DpcFactorProvenance[];
   notes?: string;
 }
 
@@ -64,6 +77,7 @@ export interface DpcWebsiteUseInput {
   mobileIntensitySource: string;
   meanGlobalGridFactorKgCO2ePerKWh: number;
   gridFactorSource: string;
+  factorProvenance?: DpcFactorProvenance[];
 }
 
 export interface DpcTravelInput {
@@ -71,6 +85,7 @@ export interface DpcTravelInput {
   emissionsTCO2e?: number;
   emissionsKgCO2e?: number;
   source: string;
+  factorProvenance?: DpcFactorProvenance;
   notes?: string;
 }
 
@@ -94,6 +109,7 @@ export interface DpcOnPremiseResult {
   gridFactorSource: string;
   source: string;
   confidence: DpcConfidence;
+  factorProvenance?: DpcFactorProvenance;
   notes?: string;
 }
 
@@ -107,6 +123,7 @@ export interface DpcNetworkingResult {
   emissionsKgCO2e: number;
   source: string;
   confidence: DpcConfidence;
+  factorProvenance?: DpcFactorProvenance[];
   notes?: string;
 }
 
@@ -211,6 +228,7 @@ export function calculateOnPremiseRow(input: DpcOnPremiseInput): DpcOnPremiseRes
     emissionsKgCO2e,
     gridFactorKgCO2ePerKWh: input.gridFactorKgCO2ePerKWh,
     gridFactorSource: input.gridFactorSource,
+    factorProvenance: input.factorProvenance,
     source: input.source,
     confidence: input.confidence,
     notes: input.notes,
@@ -242,6 +260,7 @@ export function calculateNetworkingRow(input: DpcNetworkingInput): DpcNetworking
     networkEnergyIntensityKWhPerGB: input.networkEnergyIntensityKWhPerGB,
     gridFactorKgCO2ePerKWh: input.gridFactorKgCO2ePerKWh,
     gridFactorSource: input.gridFactorSource,
+    factorProvenance: input.factorProvenance,
     emissionsKgCO2e,
     source: input.source,
     confidence: input.confidence,
@@ -280,6 +299,7 @@ export function calculateWebsiteUse(input: DpcWebsiteUseInput) {
     mobileIntensitySource: input.mobileIntensitySource,
     meanGlobalGridFactorKgCO2ePerKWh: input.meanGlobalGridFactorKgCO2ePerKWh,
     gridFactorSource: input.gridFactorSource,
+    factorProvenance: input.factorProvenance,
   };
 }
 
@@ -297,6 +317,7 @@ export function calculateTravelRow(input: DpcTravelInput) {
     description: input.description,
     emissionsKgCO2e: value,
     source: input.source,
+    factorProvenance: input.factorProvenance,
     notes: input.notes,
   };
 }
