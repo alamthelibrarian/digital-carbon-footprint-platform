@@ -290,6 +290,8 @@
         ["Functional unit", envelope.scope.functionalUnit],
         ["Reporting period", envelope.scope.reportingPeriod],
         ["Geography", envelope.scope.geography || "Not specified"],
+        ["Prepared by", metadata.preparedBy || "Not specified"],
+        ["DPC reference period", envelope.scope.referencePeriod],
         ["Assessment ID", envelope.assessment.id],
         ["Created (UTC)", envelope.assessment.createdAt],
         ["Method", `${envelope.method.name} v${envelope.method.version}`]
