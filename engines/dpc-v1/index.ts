@@ -87,6 +87,8 @@ export interface DpcOnPremiseResult {
   combinedPowerW: number;
   annualEnergyKWh: number;
   emissionsKgCO2e: number;
+  gridFactorKgCO2ePerKWh: number;
+  gridFactorSource: string;
   source: string;
   confidence: DpcConfidence;
   notes?: string;
@@ -96,6 +98,9 @@ export interface DpcNetworkingResult {
   category: DpcActivityCategory;
   activityName: string;
   dataVolumeGBPerDay: number;
+  networkEnergyIntensityKWhPerGB: number;
+  gridFactorKgCO2ePerKWh: number;
+  gridFactorSource: string;
   emissionsKgCO2e: number;
   source: string;
   confidence: DpcConfidence;
@@ -114,6 +119,10 @@ export interface DpcCalculationResult {
     dataVolumeGB: number;
     midpointIntensityKWhPerGB: number;
     networkEnergyKWh: number;
+    lowIntensityKWhPerGB: number;
+    highIntensityKWhPerGB: number;
+    lowEmissionsKgCO2e: number;
+    highEmissionsKgCO2e: number;
     emissionsKgCO2e: number;
   } | null;
   travel: Array<{ description: string; emissionsKgCO2e: number; source: string; notes?: string }>;
@@ -182,6 +191,8 @@ export function calculateOnPremiseRow(input: DpcOnPremiseInput): DpcOnPremiseRes
     combinedPowerW,
     annualEnergyKWh,
     emissionsKgCO2e,
+    gridFactorKgCO2ePerKWh: input.gridFactorKgCO2ePerKWh,
+    gridFactorSource: input.gridFactorSource,
     source: input.source,
     confidence: input.confidence,
     notes: input.notes,
@@ -207,6 +218,9 @@ export function calculateNetworkingRow(input: DpcNetworkingInput): DpcNetworking
     category: input.category,
     activityName: input.activityName,
     dataVolumeGBPerDay,
+    networkEnergyIntensityKWhPerGB: input.networkEnergyIntensityKWhPerGB,
+    gridFactorKgCO2ePerKWh: input.gridFactorKgCO2ePerKWh,
+    gridFactorSource: input.gridFactorSource,
     emissionsKgCO2e,
     source: input.source,
     confidence: input.confidence,
@@ -225,7 +239,18 @@ export function calculateWebsiteUse(input: DpcWebsiteUseInput) {
   ) / 2;
   const networkEnergyKWh = dataVolumeGB * midpointIntensityKWhPerGB;
   const emissionsKgCO2e = networkEnergyKWh * input.meanGlobalGridFactorKgCO2ePerKWh;
-  return { dataVolumeGB, midpointIntensityKWhPerGB, networkEnergyKWh, emissionsKgCO2e };
+  const lowIntensityKWhPerGB = Math.min(input.fixedLineIntensityKWhPerGB, input.mobileIntensityKWhPerGB);
+  const highIntensityKWhPerGB = Math.max(input.fixedLineIntensityKWhPerGB, input.mobileIntensityKWhPerGB);
+  return {
+    dataVolumeGB,
+    midpointIntensityKWhPerGB,
+    networkEnergyKWh,
+    lowIntensityKWhPerGB,
+    highIntensityKWhPerGB,
+    lowEmissionsKgCO2e: dataVolumeGB * lowIntensityKWhPerGB * input.meanGlobalGridFactorKgCO2ePerKWh,
+    highEmissionsKgCO2e: dataVolumeGB * highIntensityKWhPerGB * input.meanGlobalGridFactorKgCO2ePerKWh,
+    emissionsKgCO2e,
+  };
 }
 
 export function calculateTravelRow(input: DpcTravelInput) {
