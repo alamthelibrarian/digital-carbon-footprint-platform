@@ -95,6 +95,8 @@ export function validateEmissionFactorRecord(input: unknown): string[] {
 
   if (typeof input.value !== "number" || !Number.isFinite(input.value) || input.value < 0) {
     errors.push("value must be a finite, non-negative number");
+  } else if (input.value === 0 && !isNonEmptyString(input.notes)) {
+    errors.push("notes must explain and evidence a zero factor value");
   }
 
   if (!isObject(input.source) || !isNonEmptyString(input.source.name)) {
