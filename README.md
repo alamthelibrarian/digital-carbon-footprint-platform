@@ -33,6 +33,16 @@ This project is an independent software implementation based on the DPC toolkit.
 
 Results from different methodologies are not automatically comparable. Any comparison or aggregation will require documented harmonization.
 
+## Technical documentation
+
+- [System architecture](./docs/ARCHITECTURE.md)
+- [Methodology and attribution](./docs/METHODOLOGY.md)
+- [Emission factor catalogue specification](./docs/EMISSION-FACTOR-CATALOGUE.md)
+- [Calculation result contract](./docs/RESULT-CONTRACT.md)
+- [Development roadmap](./docs/ROADMAP.md)
+
+The result contract is a proposed platform-level target. The current DPC engine remains method-specific and has not yet been adapted to that shared envelope.
+
 ## Method roadmap
 
 | Method or framework | Intended role | Status |
