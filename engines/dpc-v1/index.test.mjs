@@ -127,3 +127,60 @@ test("Rejects utilisation values outside 0–1", () => {
     confidence: "low",
   }), /fraction between 0 and 1/);
 });
+
+
+test("Regression fixture matches independently recalculated DPC workbook outputs", () => {
+  // Fixture inputs were entered into a working copy of the DPC v1.0 workbook
+  // and recalculated with LibreOffice Calc. See fixtures/README.md.
+  const result = calculateDpcV1({
+    onPremise: [{
+      category: "acquisition-transfer-ingest",
+      machineName: "Test server",
+      idlePowerW: 100,
+      maxPowerW: 200,
+      meanUtilisation: 0.5,
+      storageCapacityTB: 10,
+      storageEnergyWhPerTBh: 0.5,
+      pue: 1.5,
+      gridFactorKgCO2ePerKWh: 0.20705,
+      gridFactorSource: "DPC workbook Grid factors: United Kingdom",
+      source: "Regression fixture measurements",
+      confidence: "high",
+    }],
+    cloud: [
+      { category: "data-centres-servers", serviceName: "Cloud storage", annualEmissionsKgCO2e: 10, source: "Regression fixture", confidence: "high" },
+      { category: "networking", serviceName: "Cloud networking", annualEmissionsKgCO2e: 5, source: "Regression fixture", confidence: "medium" },
+    ],
+    networking: [{
+      category: "acquisition-transfer-ingest",
+      activityName: "Test network",
+      transmittedMBPerDay: 1000,
+      receivedMBPerDay: 500,
+      networkEnergyIntensityKWhPerGB: 0.0065,
+      gridFactorKgCO2ePerKWh: 0.45,
+      gridFactorSource: "DPC workbook Datasheet",
+      source: "Regression fixture measurements",
+      confidence: "high",
+    }],
+    websiteUse: {
+      averagePageSizeKB: 100,
+      annualVisits: 10000,
+      averageDownloadSizeMB: 5,
+      annualDownloads: 1000,
+      fixedLineIntensityKWhPerGB: 0.0065,
+      mobileIntensityKWhPerGB: 0.1,
+      fixedLineIntensitySource: "DPC workbook Datasheet",
+      mobileIntensitySource: "DPC workbook Datasheet",
+      meanGlobalGridFactorKgCO2ePerKWh: 0.45,
+      gridFactorSource: "DPC workbook Datasheet",
+    },
+    travel: [{ description: "Test trip", emissionsTCO2e: 0.25, source: "Regression fixture" }],
+  });
+
+  assert.ok(Math.abs(result.onPremise[0].annualEnergyKWh - 2036.7) < 1e-9);
+  assert.ok(Math.abs(result.onPremise[0].emissionsKgCO2e - 421.698735) < 1e-9);
+  assert.ok(Math.abs(result.networking[0].emissionsKgCO2e - 0.133453125) < 1e-12);
+  assert.ok(Math.abs(result.websiteUse.emissionsKgCO2e - 0.143775) < 1e-12);
+  assert.equal(result.travel[0].emissionsKgCO2e, 250);
+  assert.ok(Math.abs(result.totals.totalKgCO2e - 686.975963125) < 1e-9);
+});
