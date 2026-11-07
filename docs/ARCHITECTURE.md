@@ -21,6 +21,10 @@ Every engine must declare its method identifier, version, supported scope, requi
 
 The shared platform must not rewrite, blend, or silently harmonize method-specific equations. Comparisons between methods require an explicit, documented harmonization process.
 
+## Shared result envelope and adapters
+
+The platform-level result envelope is defined in `docs/RESULT-CONTRACT.md`. Each calculation engine retains its native output and exposes a separate adapter into that envelope. The adapter may map and label outputs but must not recalculate, reinterpret, or harmonize method-specific values. The initial DPC adapter lives in `engines/dpc-v1/result-adapter.ts`.
+
 ## Result provenance
 
 A result should retain:
