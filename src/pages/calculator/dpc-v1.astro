@@ -325,8 +325,15 @@
         const item = document.createElement("div"); item.className = "provenance-item";
         const location = document.createElement("strong"); location.textContent = entry.location;
         const source = document.createElement("span");
-        const p = entry.provenance as Record<string, unknown>;
-        source.textContent = [p.factor, p.value !== undefined ? `${p.value} ${p.unit || ""}` : p.unit, p.source ? `Source: ${p.source}` : "Source: not recorded", p.geography ? `Geography: ${p.geography}` : null, p.referenceYear ? `Reference year: ${p.referenceYear}` : null, p.dataQuality ? `Data quality: ${p.dataQuality}` : null].filter(Boolean).join(" · ");
+        const p = entry.provenance;
+        source.textContent = [
+          p.factor,
+          p.value !== undefined ? `${p.value} ${p.unit}` : p.unit,
+          p.source ? `Source: ${p.source}` : "Source: not recorded",
+          p.geography ? `Geography: ${p.geography}` : null,
+          p.referenceYear ? `Reference year: ${p.referenceYear}` : null,
+          p.dataQuality ? `Data quality: ${p.dataQuality}` : null
+        ].filter(Boolean).join(" · ");
         item.append(location, source); return item;
       }));
       const renderList = (selector: string, entries: string[]) => {
