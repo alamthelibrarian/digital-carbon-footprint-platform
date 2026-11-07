@@ -17,6 +17,10 @@ The implementation does not include or redistribute the original DPC workbook, i
 - Travel: direct kgCO2e or tCO2e converted to kgCO2e.
 - Summary: aggregation of the above categories.
 
+## Web calculator
+
+The Astro interface at `/calculator/dpc-v1/` consumes this engine directly. Each activity group can be included or excluded. The interface displays the annual total, category breakdown, and calculation details, and supports printing the result. Example values are prefilled for demonstration and must be replaced with evidence-based inputs. The interface does not currently save calculations or export structured reports.
+
 ## Validation still required
 
 - Regression comparison against Excel-calculated workbook outputs.
