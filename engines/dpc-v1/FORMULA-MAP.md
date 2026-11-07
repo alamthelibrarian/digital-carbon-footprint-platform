@@ -14,7 +14,7 @@ The reference period is one year. The workbook uses activity data, energy-intens
 
 ## 2. Sheet-to-engine mapping
 
-| Workbook sheet | Role in calculation | Planned DCFP module |
+| Workbook sheet | Role in calculation | DCFP engine area |
 |---|---|---|
 | Summary | Aggregates category totals | Result aggregation |
 | On Premise | Server and storage energy/emissions | `on-premise` |
@@ -96,4 +96,4 @@ Before marking this engine implemented:
 8. Document the exclusion of embodied carbon and the tool's indicative-use limitation.
 9. Review licensing and attribution before publishing any copied source data or workbook content.
 
-**Current status:** formula audit started; calculation engine remains unimplemented.
+**Current status:** formula audit documented; an initial TypeScript engine and seven automated tests are present, including one synthetic workbook regression fixture recalculated with LibreOffice Calc. This is partial verification only. Microsoft Excel comparison, fuller edge-case coverage, complete source-method review, and independent expert review remain outstanding. Do not describe the method as fully validated or use it for formal reporting.
