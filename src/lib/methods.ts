@@ -20,7 +20,7 @@ export const methods: MethodDefinition[] = [
     status: "in-development",
     statusLabel: "Under development · not validated",
     summary: "A method for estimating the carbon footprint associated with digital preservation activities.",
-    role: "The first calculation engine planned for DCFP. Its implementation will be based on the published DPC toolkit, with source attribution and documented interpretation.",
+    role: "The first calculation engine under development for DCFP. The independent implementation is based on the published DPC toolkit, with source attribution and documented interpretation.",
     source: "Digital Preservation Coalition. (2026). Carbon Footprint Toolkit.",
     sourceUrl: "https://doi.org/10.7207/carbonfootprinttoolkit26-01",
     implementationNote: "An early TypeScript calculation engine and initial tests exist. It is not yet validated against Excel-calculated outputs and must not be used for production or formal reporting.",
