@@ -111,6 +111,9 @@ export function validateEmissionFactorRecord(input: unknown): string[] {
     if (input.source.publishedYear !== undefined && !validYear(input.source.publishedYear)) {
       errors.push("source.publishedYear must be a year between 1900 and 2100");
     }
+    if (input.source.accessedAt !== undefined && !validDate(input.source.accessedAt)) {
+      errors.push("source.accessedAt must be a valid YYYY-MM-DD date");
+    }
   }
 
   if (!DATA_KINDS.includes(input.dataKind as FactorDataKind)) {
