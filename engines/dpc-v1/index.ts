@@ -305,6 +305,9 @@ export function calculateDpcV1(input: DpcCalculationInput): DpcCalculationResult
   const onPremise = (input.onPremise ?? []).map(calculateOnPremiseRow);
   const cloud = input.cloud ?? [];
   for (const row of cloud) {
+    if (row.category !== "data-centres-servers" && row.category !== "networking") {
+      throw new RangeError("Unsupported cloud emissions category.");
+    }
     requireNonNegative("annualEmissionsKgCO2e", row.annualEmissionsKgCO2e);
     requireText("serviceName", row.serviceName);
     requireText("source", row.source);
