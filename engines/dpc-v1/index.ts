@@ -172,6 +172,12 @@ function requireNonNegative(name: string, value: number): void {
   }
 }
 
+function requireFiniteResult(name: string, value: number): void {
+  if (!Number.isFinite(value)) {
+    throw new RangeError(`${name} produced a non-finite result.`);
+  }
+}
+
 function validateCategory(category: DpcActivityCategory): void {
   if (!CATEGORIES.includes(category)) {
     throw new RangeError("Unsupported DPC activity category.");
@@ -218,6 +224,9 @@ export function calculateOnPremiseRow(input: DpcOnPremiseInput): DpcOnPremiseRes
   const combinedPowerW = serverPowerW + storagePowerW;
   const annualEnergyKWh = (combinedPowerW * 24 * 365 / 1000) * input.pue;
   const emissionsKgCO2e = annualEnergyKWh * input.gridFactorKgCO2ePerKWh;
+  for (const [name, value] of Object.entries({ serverPowerW, storagePowerW, combinedPowerW, annualEnergyKWh, emissionsKgCO2e })) {
+    requireFiniteResult(name, value);
+  }
 
   return {
     category: input.category,
@@ -253,6 +262,9 @@ export function calculateNetworkingRow(input: DpcNetworkingInput): DpcNetworking
   // Deliberately preserve the source workbook's 365/12 multiplier for parity.
   const emissionsKgCO2e = dataVolumeGBPerDay * (365 / 12)
     * input.networkEnergyIntensityKWhPerGB * input.gridFactorKgCO2ePerKWh;
+  for (const [name, value] of Object.entries({ dataVolumeGBPerDay, emissionsKgCO2e })) {
+    requireFiniteResult(name, value);
+  }
 
   return {
     category: input.category,
@@ -287,14 +299,20 @@ export function calculateWebsiteUse(input: DpcWebsiteUseInput) {
   const emissionsKgCO2e = networkEnergyKWh * input.meanGlobalGridFactorKgCO2ePerKWh;
   const lowIntensityKWhPerGB = Math.min(input.fixedLineIntensityKWhPerGB, input.mobileIntensityKWhPerGB);
   const highIntensityKWhPerGB = Math.max(input.fixedLineIntensityKWhPerGB, input.mobileIntensityKWhPerGB);
+  const lowEmissionsKgCO2e = dataVolumeGB * lowIntensityKWhPerGB * input.meanGlobalGridFactorKgCO2ePerKWh;
+  const highEmissionsKgCO2e = dataVolumeGB * highIntensityKWhPerGB * input.meanGlobalGridFactorKgCO2ePerKWh;
+  for (const [name, value] of Object.entries({
+    dataVolumeGB, midpointIntensityKWhPerGB, networkEnergyKWh, lowIntensityKWhPerGB,
+    highIntensityKWhPerGB, emissionsKgCO2e, lowEmissionsKgCO2e, highEmissionsKgCO2e,
+  })) requireFiniteResult(name, value);
   return {
     dataVolumeGB,
     midpointIntensityKWhPerGB,
     networkEnergyKWh,
     lowIntensityKWhPerGB,
     highIntensityKWhPerGB,
-    lowEmissionsKgCO2e: dataVolumeGB * lowIntensityKWhPerGB * input.meanGlobalGridFactorKgCO2ePerKWh,
-    highEmissionsKgCO2e: dataVolumeGB * highIntensityKWhPerGB * input.meanGlobalGridFactorKgCO2ePerKWh,
+    lowEmissionsKgCO2e,
+    highEmissionsKgCO2e,
     emissionsKgCO2e,
     fixedLineIntensitySource: input.fixedLineIntensitySource,
     mobileIntensitySource: input.mobileIntensitySource,
@@ -314,6 +332,7 @@ export function calculateTravelRow(input: DpcTravelInput) {
   requireText("source", input.source);
   const value = hasTonnes ? input.emissionsTCO2e! * 1000 : input.emissionsKgCO2e!;
   requireNonNegative("travel emissions", value);
+  requireFiniteResult("travel emissions", value);
   return {
     description: input.description,
     emissionsKgCO2e: value,
@@ -348,6 +367,10 @@ export function calculateDpcV1(input: DpcCalculationInput): DpcCalculationResult
   const totalKgCO2e = onPremiseKgCO2e + cloudDataCentresServersKgCO2e
     + cloudNetworkingKgCO2e + networkingOnPremiseKgCO2e
     + websiteUseKgCO2e + travelKgCO2e;
+  for (const [name, value] of Object.entries({
+    onPremiseKgCO2e, cloudDataCentresServersKgCO2e, cloudNetworkingKgCO2e,
+    networkingOnPremiseKgCO2e, websiteUseKgCO2e, travelKgCO2e, totalKgCO2e,
+  })) requireFiniteResult(name, value);
 
   return {
     method: "dpc-carbon-footprint-toolkit",
