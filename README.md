@@ -14,7 +14,7 @@ The initial use case is digital preservation. The platform is intended to expand
 
 ## Try the development calculator
 
-The first DPC v1.0 calculator interface is available at `/calculator/dpc-v1/`. It connects to the TypeScript engine and provides optional input sections for on-premise equipment, cloud services, networking, website use, and travel. Users can print results or download a JSON record containing assessment metadata, inputs, outputs, and limitations. Example values are illustrative only; replace them with documented activity data and emission factors. The calculator is a development preview, not a validated reporting tool.
+The first DPC v1.0 calculator interface is available at `/calculator/dpc-v1/`. It connects to the TypeScript engine and provides optional input sections for on-premise equipment, cloud services, networking, website use, and travel. The results view presents assessment scope, category contributions, factor-source records, assumptions, and limitations. Users can download the complete JSON record or use the browser print dialog to print or save the report as PDF. PDF output depends on the browser's print-to-PDF support; it is not a server-generated PDF. The calculator is a development preview, not a validated reporting tool.
 
 ## Methodology and attribution
 
@@ -39,10 +39,11 @@ Results from different methodologies are not automatically comparable. Any compa
 - [Methodology and attribution](./docs/METHODOLOGY.md)
 - [Emission factor catalogue specification](./docs/EMISSION-FACTOR-CATALOGUE.md)
 - [Calculation result contract](./docs/RESULT-CONTRACT.md)
+- [Assessment report and export guide](./docs/REPORTING.md)
 - [DPC v1.0 result adapter](./engines/dpc-v1/result-adapter.ts)
 - [Development roadmap](./docs/ROADMAP.md)
 
-The result contract is a proposed platform-level target. The current DPC engine remains method-specific and has not yet been adapted to that shared envelope.
+The method-neutral result contract is implemented as a wrapper for DPC v1.0. The native DPC result remains intact and authoritative; the adapter standardises assessment metadata, metrics, provenance, assumptions, limitations, and traceability.
 
 ## Method roadmap
 
