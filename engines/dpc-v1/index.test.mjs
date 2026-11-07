@@ -219,7 +219,6 @@ test("Preserves factor provenance metadata without changing calculated emissions
     source: "National grid dataset",
     geography: "Example country",
     referenceYear: 2025,
-    dataQuality: "medium",
   };
   const networkProvenance = [
     { factor: "electricity-grid", value: 0.4, unit: "kgCO2e/kWh", source: "Grid dataset", geography: "Example country", referenceYear: 2025 },
@@ -554,10 +553,6 @@ test("Validates factor provenance metadata without changing calculation inputs",
     ...base,
     factorProvenance: { factor: "grid", unit: "kgCO2e/kWh", value: 0.4, source: "Dataset", referenceYear: 2025.5 },
   }), /referenceYear must be a positive integer/);
-  assert.throws(() => calculateOnPremiseRow({
-    ...base,
-    factorProvenance: { factor: "grid", unit: "kgCO2e/kWh", source: "Dataset", dataQuality: "unknown" },
-  }), /confidence must be high, medium, or low/);
 
   const valid = calculateOnPremiseRow({
     ...base,
@@ -568,7 +563,6 @@ test("Validates factor provenance metadata without changing calculation inputs",
       source: "Grid dataset",
       geography: "Example region",
       referenceYear: 2025,
-      dataQuality: "high",
     },
   });
   assert.ok(Math.abs(valid.emissionsKgCO2e - 54.312) < 1e-9);
