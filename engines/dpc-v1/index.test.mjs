@@ -406,7 +406,7 @@ test("Rejects non-finite derived values caused by numeric overflow", () => {
     description: "Overflow trip",
     emissionsTCO2e: 1e308,
     source: "Synthetic source",
-  }), /non-finite result/);
+  }), /finite, non-negative number/);
 
   assert.throws(() => calculateDpcV1({
     cloud: [
