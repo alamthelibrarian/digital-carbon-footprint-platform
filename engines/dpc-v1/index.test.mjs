@@ -359,3 +359,59 @@ test("Empty assessment returns zero totals without inventing activity rows", () 
     totalKgCO2e: 0,
   });
 });
+
+
+test("Rejects non-finite derived values caused by numeric overflow", () => {
+  assert.throws(() => calculateOnPremiseRow({
+    category: "bitstream-preservation",
+    machineName: "Overflow server",
+    idlePowerW: 1e308,
+    maxPowerW: 1e308,
+    meanUtilisation: 0,
+    storageCapacityTB: 0,
+    storageEnergyWhPerTBh: 0,
+    pue: 2,
+    gridFactorKgCO2ePerKWh: 1,
+    gridFactorSource: "Synthetic source",
+    source: "Synthetic activity data",
+    confidence: "high",
+  }), /non-finite result/);
+
+  assert.throws(() => calculateNetworkingRow({
+    category: "acquisition-transfer-ingest",
+    activityName: "Overflow transfer",
+    transmittedMBPerDay: 1e308,
+    receivedMBPerDay: 1e308,
+    networkEnergyIntensityKWhPerGB: 1,
+    gridFactorKgCO2ePerKWh: 1,
+    gridFactorSource: "Synthetic source",
+    source: "Synthetic activity data",
+    confidence: "high",
+  }), /non-finite result/);
+
+  assert.throws(() => calculateWebsiteUse({
+    averagePageSizeKB: 1e308,
+    annualVisits: 1e308,
+    averageDownloadSizeMB: 0,
+    annualDownloads: 0,
+    fixedLineIntensityKWhPerGB: 1,
+    mobileIntensityKWhPerGB: 1,
+    fixedLineIntensitySource: "Synthetic source",
+    mobileIntensitySource: "Synthetic source",
+    meanGlobalGridFactorKgCO2ePerKWh: 1,
+    gridFactorSource: "Synthetic source",
+  }), /non-finite result/);
+
+  assert.throws(() => calculateTravelRow({
+    description: "Overflow trip",
+    emissionsTCO2e: 1e308,
+    source: "Synthetic source",
+  }), /non-finite result/);
+
+  assert.throws(() => calculateDpcV1({
+    cloud: [
+      { category: "data-centres-servers", serviceName: "Cloud A", annualEmissionsKgCO2e: 1e308, source: "Provider A", confidence: "high" },
+      { category: "data-centres-servers", serviceName: "Cloud B", annualEmissionsKgCO2e: 1e308, source: "Provider B", confidence: "high" },
+    ],
+  }), /non-finite result/);
+});
