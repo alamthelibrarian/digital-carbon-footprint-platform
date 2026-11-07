@@ -231,6 +231,19 @@ function validateOptionalFactorProvenance(
   else if (provenance !== undefined) validateFactorProvenance(provenance);
 }
 
+function assertProvenanceValueMatches(
+  provenance: DpcFactorProvenance | DpcFactorProvenance[] | undefined,
+  factor: string,
+  expectedValue: number,
+): void {
+  const entries = Array.isArray(provenance) ? provenance : provenance ? [provenance] : [];
+  for (const entry of entries) {
+    if (entry.factor === factor && entry.value !== undefined && entry.value !== expectedValue) {
+      throw new RangeError(`factorProvenance.value for ${factor} must match the value used by the DPC calculation.`);
+    }
+  }
+}
+
 function sum(values: number[]): number {
   return values.reduce((total, value) => total + value, 0);
 }
@@ -254,6 +267,7 @@ export function calculateOnPremiseRow(input: DpcOnPremiseInput): DpcOnPremiseRes
   requireText("source", input.source);
   validateConfidence(input.confidence);
   validateOptionalFactorProvenance(input.factorProvenance);
+  assertProvenanceValueMatches(input.factorProvenance, "electricity-grid", input.gridFactorKgCO2ePerKWh);
 
   const serverPowerW = ((input.maxPowerW - input.idlePowerW) * input.meanUtilisation) + input.idlePowerW;
   const storagePowerW = input.storageCapacityTB * input.storageEnergyWhPerTBh;
@@ -294,6 +308,8 @@ export function calculateNetworkingRow(input: DpcNetworkingInput): DpcNetworking
   requireText("source", input.source);
   validateConfidence(input.confidence);
   validateOptionalFactorProvenance(input.factorProvenance);
+  assertProvenanceValueMatches(input.factorProvenance, "electricity-grid", input.gridFactorKgCO2ePerKWh);
+  assertProvenanceValueMatches(input.factorProvenance, "network-energy-intensity", input.networkEnergyIntensityKWhPerGB);
 
   const dataVolumeGBPerDay = (input.transmittedMBPerDay + input.receivedMBPerDay) / 1000;
   // Deliberately preserve the source workbook's 365/12 multiplier for parity.
@@ -332,6 +348,9 @@ export function calculateWebsiteUse(input: DpcWebsiteUseInput) {
   requireText("mobileIntensitySource", input.mobileIntensitySource);
   requireText("gridFactorSource", input.gridFactorSource);
   validateOptionalFactorProvenance(input.factorProvenance);
+  assertProvenanceValueMatches(input.factorProvenance, "fixed-line-network-intensity", input.fixedLineIntensityKWhPerGB);
+  assertProvenanceValueMatches(input.factorProvenance, "mobile-network-intensity", input.mobileIntensityKWhPerGB);
+  assertProvenanceValueMatches(input.factorProvenance, "mean-global-grid", input.meanGlobalGridFactorKgCO2ePerKWh);
   const dataVolumeGB = (
     (input.averagePageSizeKB / 1000) * input.annualVisits
     + input.averageDownloadSizeMB * input.annualDownloads
@@ -378,6 +397,7 @@ export function calculateTravelRow(input: DpcTravelInput) {
   const value = hasTonnes ? input.emissionsTCO2e! * 1000 : input.emissionsKgCO2e!;
   requireNonNegative("travel emissions", value);
   requireFiniteResult("travel emissions", value);
+  assertProvenanceValueMatches(input.factorProvenance, "travel-emissions-calculation", value);
   return {
     description: input.description,
     emissionsKgCO2e: value,
@@ -399,6 +419,7 @@ export function calculateDpcV1(input: DpcCalculationInput): DpcCalculationResult
     requireText("source", row.source);
     validateConfidence(row.confidence);
     validateOptionalFactorProvenance(row.factorProvenance);
+    assertProvenanceValueMatches(row.factorProvenance, "provider-reported-emissions", row.annualEmissionsKgCO2e);
   }
   const networking = (input.networking ?? []).map(calculateNetworkingRow);
   const websiteUse = input.websiteUse ? calculateWebsiteUse(input.websiteUse) : null;
