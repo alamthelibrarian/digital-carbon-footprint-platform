@@ -27,6 +27,8 @@ jobs:
           node -e "const a=require('./npm-audit.json'); const v=a.vulnerabilities||{}; console.log(JSON.stringify({summary:a.metadata?.vulnerabilities,details:Object.entries(v).map(([name,item])=>({name,severity:item.severity,range:item.range,fixAvailable:item.fixAvailable,via:item.via.map(x=>typeof x==='string'?x:{title:x.title,url:x.url,range:x.range})}))},null,2))"
       - name: Enforce high-severity dependency threshold
         run: npm audit --audit-level=high
+      - name: Type-check TypeScript
+        run: npm run typecheck
       - name: Run calculation tests
         run: npm test
       - name: Check and build
