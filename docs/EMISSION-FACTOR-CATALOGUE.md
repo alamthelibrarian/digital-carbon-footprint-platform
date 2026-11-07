@@ -49,8 +49,8 @@ Use either a calendar year or a complete inclusive date range. Do not imply that
 
 Method identifiers are explicit, version-aware identifiers, for example:
 
-- `dpc-carbon-footprint-toolkit@1.0`
-- `sci@1.0` (only when a corresponding engine and compatibility review exist)
+- `dpc-carbon-footprint-toolkit` (engine version `1.0`)
+- `sci` (engine version tracked separately; only when a corresponding engine and compatibility review exist)
 - `itu-t-l1410` (only when the applicable study scope supports it)
 
 These are examples of identifier style, not a declaration that those methods are implemented. A shared unit does not establish methodological equivalence. An engine must check method applicability and any additional method-specific constraints before using a factor.
