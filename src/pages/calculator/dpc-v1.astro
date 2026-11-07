@@ -128,7 +128,8 @@
         <div class="report-meta" id="report-meta"></div>
         <section class="report-total"><p class="eyebrow">TOTAL ESTIMATED EMISSIONS</p><p id="total" class="total">—</p><span class="unit">kgCO₂e · DPC native aggregate</span></section>
         <section class="report-section"><h3>Emissions by category</h3><p class="hint">Contribution is calculated against the native DPC total. Percentages are omitted when the total is zero.</p><div id="breakdown" class="breakdown"></div></section>
-        <section class="report-section"><h3>Factor sources and data quality</h3><p id="provenance-status" class="quality-status"></p><div id="provenance" class="provenance-list"></div></section>
+        <section class="report-section"><h3>Activity-data confidence</h3><p class="quality-status">Confidence levels below describe the activity data supplied for each calculation row. They are self-assessments and are not independent verification.</p><div id="activity-confidence" class="provenance-list"></div></section>
+        <section class="report-section"><h3>Emission-factor provenance</h3><p id="provenance-status" class="quality-status"></p><div id="provenance" class="provenance-list"></div><p class="quality-status">Emission-factor quality is not independently assessed in this development preview. A recorded source does not establish its authority, geographic or temporal suitability, or scientific validity.</p></section>
         <section class="report-section"><h3>Assumptions</h3><ul id="assumptions" class="report-list"></ul></section>
         <section class="report-section"><h3>Limitations</h3><ul id="limitations" class="report-list"></ul></section>
         <details class="technical-details"><summary>Complete calculation record (JSON)</summary><pre id="details"></pre></details>
@@ -206,7 +207,7 @@
         gridFactorKgCO2ePerKWh: number("gridFactorKgCO2ePerKWh"),
         gridFactorSource: value("gridFactorSource"), source: value("onSource"),
         confidence: value("onConfidence"),
-        factorProvenance: { factor: "electricity-grid", value: number("gridFactorKgCO2ePerKWh"), unit: "kgCO2e/kWh", source: value("gridFactorSource"), geography: value("onFactorGeography") || null, referenceYear: value("onFactorYear") ? number("onFactorYear") : null, dataQuality: value("onConfidence") }
+        factorProvenance: { factor: "electricity-grid", value: number("gridFactorKgCO2ePerKWh"), unit: "kgCO2e/kWh", source: value("gridFactorSource"), geography: value("onFactorGeography") || null, referenceYear: value("onFactorYear") ? number("onFactorYear") : null }
         }];
       }
       if (enabled("cloudEnabled")) {
@@ -216,7 +217,7 @@
         requiredText("cloudNetworkSource", "Cloud networking source");
         requiredText("cloudConfidence", "Cloud data confidence");
         input.cloud = [
-        { category: "data-centres-servers", serviceName: value("cloudServerName"), annualEmissionsKgCO2e: number("cloudServerKg"), source: value("cloudServerSource"), confidence: value("cloudConfidence"), factorProvenance: { factor: "provider-reported-emissions", value: number("cloudServerKg"), unit: "kgCO2e/year", source: value("cloudServerSource"), geography: value("cloudFactorGeography") || null, referenceYear: value("cloudFactorYear") ? number("cloudFactorYear") : null, dataQuality: value("cloudConfidence") } },
+        { category: "data-centres-servers", serviceName: value("cloudServerName"), annualEmissionsKgCO2e: number("cloudServerKg"), source: value("cloudServerSource"), confidence: value("cloudConfidence"), factorProvenance: { factor: "provider-reported-emissions", value: number("cloudServerKg"), unit: "kgCO2e/year", source: value("cloudServerSource"), geography: value("cloudFactorGeography") || null, referenceYear: value("cloudFactorYear") ? number("cloudFactorYear") : null } },
         { category: "networking", serviceName: value("cloudNetworkName"), annualEmissionsKgCO2e: number("cloudNetworkKg"), source: value("cloudNetworkSource"), confidence: value("cloudConfidence"), factorProvenance: { factor: "provider-reported-emissions", value: number("cloudNetworkKg"), unit: "kgCO2e/year", source: value("cloudNetworkSource"), geography: value("cloudFactorGeography") || null, referenceYear: value("cloudFactorYear") ? number("cloudFactorYear") : null, dataQuality: value("cloudConfidence") } }
         ];
       }
@@ -234,7 +235,7 @@
         gridFactorSource: value("networkGridSource"), source: value("networkSource"),
         confidence: value("networkConfidence"),
         factorProvenance: [
-          { factor: "electricity-grid", value: number("networkGridFactor"), unit: "kgCO2e/kWh", source: value("networkGridSource"), geography: value("networkFactorGeography") || null, referenceYear: value("networkFactorYear") ? number("networkFactorYear") : null, dataQuality: value("networkConfidence") },
+          { factor: "electricity-grid", value: number("networkGridFactor"), unit: "kgCO2e/kWh", source: value("networkGridSource"), geography: value("networkFactorGeography") || null, referenceYear: value("networkFactorYear") ? number("networkFactorYear") : null },
           { factor: "network-energy-intensity", value: number("networkIntensity"), unit: "kWh/GB", source: value("networkIntensitySource") || null, referenceYear: value("networkIntensityYear") ? number("networkIntensityYear") : null, dataQuality: value("networkConfidence") }
         ]
         }];
@@ -319,6 +320,14 @@
         bar.style.width = `${share === null ? 0 : Math.max(0, Math.min(100, share))}%`;
         track.append(bar); row.append(top, track); return row;
       }));
+      const activityConfidence = document.querySelector<HTMLElement>("#activity-confidence")!;
+      const confidenceEntries = envelope.dataQuality.activityConfidence;
+      activityConfidence.replaceChildren(...confidenceEntries.map((confidence, index) => {
+        const item = document.createElement("div"); item.className = "provenance-item";
+        const label = document.createElement("strong"); label.textContent = `Calculation row ${index + 1}`;
+        const detail = document.createElement("span"); detail.textContent = `Activity-data confidence: ${confidence}`;
+        item.append(label, detail); return item;
+      }));
       const provenance = document.querySelector<HTMLElement>("#provenance")!;
       const coverage = envelope.dataQuality.factorProvenanceCoverage;
       document.querySelector<HTMLElement>("#provenance-status")!.textContent =
@@ -334,7 +343,6 @@
           p.source ? `Source: ${p.source}` : "Source: not recorded",
           p.geography ? `Geography: ${p.geography}` : null,
           p.referenceYear ? `Reference year: ${p.referenceYear}` : null,
-          p.dataQuality ? `Data quality: ${p.dataQuality}` : null
         ].filter(Boolean).join(" · ");
         item.append(location, source); return item;
       }));
