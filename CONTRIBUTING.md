@@ -43,6 +43,7 @@ A passing unit test alone does not validate a method. Where a source workbook ex
 Run the following before submitting:
 
 ```bash
+npm run typecheck
 npm test
 npm run build
 ```
