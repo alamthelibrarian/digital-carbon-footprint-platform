@@ -260,7 +260,7 @@ test("Preserves factor provenance metadata without changing calculated emissions
   assert.ok(Math.abs(website.emissionsKgCO2e - 0.1278) < 1e-12);
 
   const travelProvenance = {
-    factor: "travel-emissions-calculation", unit: "kgCO2e/trip",
+    factor: "travel-emissions-calculation", unit: "kgCO2e",
     source: "Travel calculator", geography: "Example country", referenceYear: 2025,
   };
   const travel = calculateTravelRow({
