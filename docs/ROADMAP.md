@@ -19,7 +19,7 @@ The roadmap is directional. A method is not considered implemented until its cal
 
 ## Phase 2 — Platform capabilities
 
-- [ ] Method registry and metadata
+- [x] Initial method registry with stable method identifiers, versions, and implementation states
 - [x] Define the method-aware emission-factor provenance catalogue contract and structural validation
 - [ ] Add method-specific input validation and data-quality reporting across engines
 - [ ] Result persistence and reproducible platform-level exports
