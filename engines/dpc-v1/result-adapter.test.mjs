@@ -143,3 +143,27 @@ test("preserves the supplied input snapshot in the envelope", () => {
   const envelope = adaptDpcV1Result(input, calculateDpcV1(input), metadata);
   assert.deepEqual(envelope.inputs, input);
 });
+
+
+test("does not count a row as provenance-covered when any factor source is missing", () => {
+  const input = {
+    networking: [{
+      category: "acquisition-transfer-ingest",
+      activityName: "Transfer",
+      transmittedMBPerDay: 10,
+      receivedMBPerDay: 5,
+      networkEnergyIntensityKWhPerGB: 0.0065,
+      gridFactorKgCO2ePerKWh: 0.4,
+      gridFactorSource: "Grid dataset",
+      source: "Transfer logs",
+      confidence: "high",
+      factorProvenance: [
+        { factor: "electricity-grid", unit: "kgCO2e/kWh", source: "Grid dataset" },
+        { factor: "network-energy-intensity", unit: "kWh/GB", source: " " },
+      ],
+    }],
+  };
+  const envelope = adaptDpcV1Result(input, calculateDpcV1(input), metadata);
+  assert.equal(envelope.factorProvenance.length, 2);
+  assert.equal(envelope.dataQuality.factorProvenanceCoverage, "none");
+});
