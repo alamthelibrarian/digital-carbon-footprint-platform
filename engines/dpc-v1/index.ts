@@ -60,7 +60,10 @@ export interface DpcWebsiteUseInput {
   annualDownloads: number;
   fixedLineIntensityKWhPerGB: number;
   mobileIntensityKWhPerGB: number;
+  fixedLineIntensitySource: string;
+  mobileIntensitySource: string;
   meanGlobalGridFactorKgCO2ePerKWh: number;
+  gridFactorSource: string;
 }
 
 export interface DpcTravelInput {
@@ -229,7 +232,12 @@ export function calculateNetworkingRow(input: DpcNetworkingInput): DpcNetworking
 }
 
 export function calculateWebsiteUse(input: DpcWebsiteUseInput) {
-  for (const [name, value] of Object.entries(input)) requireNonNegative(name, value);
+  for (const [name, value] of Object.entries(input)) {
+    if (typeof value === "number") requireNonNegative(name, value);
+  }
+  if (!input.fixedLineIntensitySource.trim() || !input.mobileIntensitySource.trim() || !input.gridFactorSource.trim()) {
+    throw new TypeError("Website-use factor sources are required.");
+  }
   const dataVolumeGB = (
     (input.averagePageSizeKB / 1000) * input.annualVisits
     + input.averageDownloadSizeMB * input.annualDownloads
@@ -250,6 +258,10 @@ export function calculateWebsiteUse(input: DpcWebsiteUseInput) {
     lowEmissionsKgCO2e: dataVolumeGB * lowIntensityKWhPerGB * input.meanGlobalGridFactorKgCO2ePerKWh,
     highEmissionsKgCO2e: dataVolumeGB * highIntensityKWhPerGB * input.meanGlobalGridFactorKgCO2ePerKWh,
     emissionsKgCO2e,
+    fixedLineIntensitySource: input.fixedLineIntensitySource,
+    mobileIntensitySource: input.mobileIntensitySource,
+    meanGlobalGridFactorKgCO2ePerKWh: input.meanGlobalGridFactorKgCO2ePerKWh,
+    gridFactorSource: input.gridFactorSource,
   };
 }
 
