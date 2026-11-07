@@ -69,3 +69,18 @@ test("rejects impossible calendar dates in factor reference periods", () => {
   });
   assert.ok(errors.some((error) => error.includes("valid YYYY-MM-DD dates")));
 });
+
+test("rejects invalid source access dates", () => {
+  const errors = validateEmissionFactorRecord({
+    ...validFactor,
+    source: { ...validFactor.source, accessedAt: "2026-02-30" },
+  });
+  assert.ok(errors.some((error) => error.includes("source.accessedAt")));
+});
+
+test("accepts a valid source access date", () => {
+  assert.deepEqual(validateEmissionFactorRecord({
+    ...validFactor,
+    source: { ...validFactor.source, accessedAt: "2026-11-07" },
+  }), []);
+});
