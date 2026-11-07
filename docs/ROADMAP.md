@@ -6,23 +6,24 @@ The roadmap is directional. A method is not considered implemented until its cal
 
 - [x] Establish public repository and project identity
 - [x] Document architecture and method-isolation principles
-- [ ] Add automated checks and contribution guidance
+- [x] Add automated checks and contribution guidance
 - [ ] Establish versioning and release policy
 
 ## Phase 1 — DPC v1.0
 
-- [ ] Audit the source toolkit's inputs, formulas, units, factors, and limitations
-- [ ] Implement a traceable DPC v1.0 engine
-- [ ] Build reference test cases and regression tests
-- [ ] Document independent implementation decisions and attribution
-- [ ] Validate outputs against permitted authoritative reference cases
+- [x] Audit the source toolkit's inputs, formulas, units, factors, and limitations
+- [x] Implement an independent, traceable DPC v1.0 calculation engine
+- [x] Build reference test cases and regression tests, including a synthetic workbook comparison fixture
+- [x] Document independent implementation decisions and attribution
+- [ ] Complete validation against permitted authoritative reference cases and independent review
 
 ## Phase 2 — Platform capabilities
 
 - [ ] Method registry and metadata
-- [ ] Emission-factor provenance catalogue
-- [ ] Input validation and data-quality reporting
-- [ ] Result persistence and reproducible exports
+- [x] Define the method-aware emission-factor provenance catalogue contract and structural validation
+- [ ] Add method-specific input validation and data-quality reporting across engines
+- [ ] Result persistence and reproducible platform-level exports
+- [ ] Adapt method-specific results to the shared result envelope through explicit adapters
 
 ## Phase 3 — Additional methods
 
