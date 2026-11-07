@@ -21,5 +21,7 @@ jobs:
           node-version: 22
       - name: Install dependencies
         run: npm install
+      - name: Run calculation tests
+        run: npm test
       - name: Check and build
         run: npm run build
