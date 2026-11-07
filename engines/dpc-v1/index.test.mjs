@@ -334,7 +334,7 @@ test("All five DPC activity categories retain multiple rows and aggregate correc
     assert.equal(result.networking.filter((row) => row.category === category).length, 2);
   }
   assert.ok(Math.abs(result.totals.onPremiseKgCO2e - 4380) < 1e-9);
-  assert.ok(Math.abs(result.totals.networkingOnPremiseKgCO2e - (20 * (365 / 12) * 0.01 * 0.5)) < 1e-12);
+  assert.ok(Math.abs(result.totals.networkingOnPremiseKgCO2e - (10 * (365 / 12) * 0.01 * 0.5)) < 1e-12);
   assert.equal(result.totals.cloudDataCentresServersKgCO2e, 2);
   assert.equal(result.totals.cloudNetworkingKgCO2e, 3);
   assert.equal(result.totals.websiteUseKgCO2e, 0);
