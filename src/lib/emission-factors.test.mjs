@@ -36,6 +36,22 @@ test("rejects missing source and method applicability", () => {
   assert.ok(errors.some((error) => error.includes("applicableMethods")));
 });
 
+test("accepts a zero factor only when its evidence or rationale is documented", () => {
+  assert.deepEqual(validateEmissionFactorRecord({ ...validFactor, value: 0, notes: "Verified zero for this defined process and reference period." }), []);
+  assert.ok(validateEmissionFactorRecord({ ...validFactor, value: 0 })
+    .some((error) => error.includes("notes must explain and evidence")));
+});
+
+test("keeps custom factor identifiers extensible", () => {
+  assert.deepEqual(validateEmissionFactorRecord({ ...validFactor, id: "custom-factor-from-local-study" }), []);
+});
+
+test("accepts each declared data kind without treating it as a quality rating", () => {
+  for (const dataKind of ["measured", "provider-reported", "secondary-literature", "proxy"]) {
+    assert.deepEqual(validateEmissionFactorRecord({ ...validFactor, dataKind }), []);
+  }
+});
+
 test("rejects negative or non-finite factor values", () => {
   assert.ok(validateEmissionFactorRecord({ ...validFactor, value: -0.1 })
     .some((error) => error.includes("finite, non-negative")));
