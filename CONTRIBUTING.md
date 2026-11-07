@@ -19,6 +19,7 @@ The project is in early development. Interfaces and folder structures may change
 - Include primary source references for formulas, factors, and datasets.
 - State units explicitly and add tests for calculation logic.
 - Preserve provenance: source, geography, unit, reference period, and data-quality information.
+- For shared factor records, declare applicable method identifiers, data kind, source citation, geography, reference period, and redistribution license where known. Do not treat a factor as method-neutral merely because its unit matches.
 - Never commit credentials, personal data, or production configuration.
 - Do not copy third-party workbook content, factor tables, standards text, or graphics without confirming permission.
 - Do not silently change a source methodology's formula to make it more intuitive. Document deviations as a separate, explicitly named variant.
