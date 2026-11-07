@@ -220,7 +220,6 @@ function validateFactorProvenance(entry: DpcFactorProvenance): void {
       throw new RangeError("factorProvenance.referenceYear must be a positive integer.");
     }
   }
-  if (entry.dataQuality !== undefined) validateConfidence(entry.dataQuality);
 }
 
 function validateOptionalFactorProvenance(
