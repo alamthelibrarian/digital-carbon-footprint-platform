@@ -74,7 +74,7 @@ npm run build
 
 ## Contributing
 
-Read [CONTRIBUTING.md](./CONTRIBUTING.md) before opening an issue or pull request. Security concerns should follow [SECURITY.md](./SECURITY.md).
+Read [CONTRIBUTING.md](./CONTRIBUTING.md) before opening an issue or pull request, and follow the [Code of Conduct](./CODE_OF_CONDUCT.md). Security concerns should follow [SECURITY.md](./SECURITY.md).
 
 ## License
 
