@@ -129,14 +129,15 @@
 <script>
   import { calculateDpcV1 } from "../../../engines/dpc-v1/index";
 
-  const form = document.querySelector("#calculator");
-  const results = document.querySelector("#results");
-  const error = document.querySelector("#error");
-  const number = (name) => Number(form.elements.namedItem(name).value);
-  const value = (name) => form.elements.namedItem(name).value.trim();
-  const enabled = (name) => form.elements.namedItem(name).checked;
-  const format = (n) => new Intl.NumberFormat("en-US", { maximumFractionDigits: 3 }).format(n);
-  let latestRecord = null;
+  const form = document.querySelector<HTMLFormElement>("#calculator")!;
+  const results = document.querySelector<HTMLElement>("#results")!;
+  const error = document.querySelector<HTMLElement>("#error")!;
+  const field = (name: string) => form.elements.namedItem(name) as HTMLInputElement;
+  const number = (name: string): number => Number(field(name).value);
+  const value = (name: string): string => field(name).value.trim();
+  const enabled = (name: string): boolean => field(name).checked;
+  const format = (n: number): string => new Intl.NumberFormat("en-US", { maximumFractionDigits: 3 }).format(n);
+  let latestRecord: Record<string, any> | null = null;
 
   form.addEventListener("submit", (event) => {
     event.preventDefault();
@@ -155,7 +156,7 @@
         periodStart: periodStart || null,
         periodEnd: periodEnd || null
       };
-      const input = {};
+      const input: any = {};
       if (enabled("onEnabled")) input.onPremise = [{
         category: value("onCategory"), machineName: value("machineName"),
         idlePowerW: number("idlePowerW"), maxPowerW: number("maxPowerW"),
@@ -199,8 +200,8 @@
       }];
 
       const result = calculateDpcV1(input);
-      document.querySelector("#total").textContent = format(result.totals.totalKgCO2e);
-      const rows = [
+      document.querySelector<HTMLElement>("#total")!.textContent = format(result.totals.totalKgCO2e);
+      const rows: Array<[string, number]> = [
         ["On-premise equipment", result.totals.onPremiseKgCO2e],
         ["Cloud data centres / servers", result.totals.cloudDataCentresServersKgCO2e],
         ["Cloud networking", result.totals.cloudNetworkingKgCO2e],
@@ -208,7 +209,7 @@
         ["Website use", result.totals.websiteUseKgCO2e],
         ["Travel", result.totals.travelKgCO2e]
       ];
-      const breakdown = document.querySelector("#breakdown");
+      const breakdown = document.querySelector<HTMLElement>("#breakdown")!;
       breakdown.replaceChildren(...rows.map(([label, amount]) => {
         const row = document.createElement("div");
         row.className = "breakdown-row";
@@ -230,7 +231,7 @@
         result,
         limitations: result.limitations
       };
-      document.querySelector("#details").textContent = JSON.stringify(latestRecord, null, 2);
+      document.querySelector<HTMLElement>("#details")!.textContent = JSON.stringify(latestRecord, null, 2);
       results.hidden = false;
       results.scrollIntoView({ behavior: "smooth", block: "start" });
     } catch (exception) {
@@ -238,7 +239,7 @@
       error.textContent = exception instanceof Error ? exception.message : "Calculation failed. Check the input values.";
     }
   });
-  document.querySelector("#download").addEventListener("click", () => {
+  document.querySelector<HTMLButtonElement>("#download")!.addEventListener("click", () => {
     if (!latestRecord) return;
     const safeName = (latestRecord.metadata.assessmentName || "dpc-assessment")
       .toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "") || "dpc-assessment";
@@ -250,7 +251,7 @@
     link.click();
     URL.revokeObjectURL(url);
   });
-  document.querySelector("#print").addEventListener("click", () => window.print());
+  document.querySelector<HTMLButtonElement>("#print")!.addEventListener("click", () => window.print());
 </script>
 <style>
   :global(*){box-sizing:border-box}:global(html){background:#151a19;color:#e9eeeb;font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}:global(body){margin:0}.shell{max-width:1040px;margin:auto;padding:28px 24px 56px}.top{display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid #303936;padding-bottom:18px}.top a{color:#a9cbb7;text-decoration:none;font-size:13px}.brand{font-size:21px!important;font-weight:800;letter-spacing:-1px;color:#f2f5f3!important}.brand span{color:#79b99b}.heading{padding:62px 0 34px;max-width:760px}.eyebrow{font-size:10px;letter-spacing:1.5px;font-weight:700;color:#82c5a2;margin:0 0 10px}.heading h1{font-size:clamp(34px,5vw,54px);line-height:1.08;letter-spacing:-2px;margin:0 0 16px}.heading h1 em{font-style:normal;color:#86c7a5}.heading>p:not(.eyebrow){color:#aeb9b3;line-height:1.7}.notice{margin-top:24px;padding:16px 18px;border:1px solid #785f3d;border-left:3px solid #c69b5a;border-radius:8px;background:#211f1a;color:#d7c7a9;font-size:13px;line-height:1.6}.notice strong{display:block;color:#f0d5a7;margin-bottom:4px}.panel{border:1px solid #35403a;border-radius:12px;padding:22px;margin:18px 0;background:#1a211e}.panel-head{display:flex;justify-content:space-between;gap:20px;align-items:center;margin-bottom:20px}.panel h2,.results h2{font-size:20px;letter-spacing:-.5px;margin:0}.hint{font-size:12px;color:#93a198;margin:7px 0 0;line-height:1.5}.toggle{display:flex;align-items:center;gap:8px;color:#aeb9b3;font-size:12px;white-space:nowrap}.toggle input{accent-color:#79b99b;width:16px;height:16px}.fields{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}.fields label{display:flex;flex-direction:column;gap:7px;color:#aeb9b3;font-size:12px}.fields input,.fields select{width:100%;background:#111715;border:1px solid #435047;border-radius:6px;padding:11px 12px;color:#edf2ee;font:inherit;font-size:14px;min-width:0}.fields input:focus,.fields select:focus{outline:2px solid #78b997;outline-offset:1px}.submit-row{display:flex;justify-content:space-between;align-items:center;gap:20px;margin:26px 0}.submit-row p{max-width:560px;color:#89968f;font-size:12px;line-height:1.6}.submit-row button,.print{border:0;border-radius:7px;background:#85c5a2;color:#102017;font-weight:750;padding:14px 19px;cursor:pointer;white-space:nowrap}.results{margin-top:40px;padding:26px;border:1px solid #527d65;border-radius:12px;background:#19231e}.results[hidden]{display:none}.unit{color:#a0b1a7;font-size:12px}.total{font-size:clamp(38px,7vw,58px);font-weight:750;letter-spacing:-2px;margin:12px 0 22px;color:#9bd3b2}.breakdown{border-top:1px solid #405047}.breakdown-row{display:flex;justify-content:space-between;gap:20px;padding:12px 0;border-bottom:1px solid #35443b;color:#c2ccc6;font-size:13px}.breakdown-row strong{font-variant-numeric:tabular-nums;color:#edf2ee}details{margin-top:20px;color:#cbd5ce;font-size:13px}summary{cursor:pointer}pre{white-space:pre-wrap;overflow-wrap:anywhere;max-height:440px;overflow:auto;background:#101613;padding:14px;border-radius:8px;color:#aebdb3;font-size:11px;line-height:1.5}.result-actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:18px}.download,.print{margin-top:0;background:#33483b;color:#e9f4ed;border:1px solid #547361;border-radius:7px;padding:12px 16px;font-weight:700;cursor:pointer}.download{background:#85c5a2;color:#102017;border-color:#85c5a2}.error{color:#f0a69a;font-size:13px;min-height:20px}footer{border-top:1px solid #303936;margin-top:64px;padding-top:18px;color:#89968f;font-size:12px;line-height:1.7}footer a{color:#9bc9ae;text-decoration:none}@media(max-width:650px){.shell{padding:20px 15px 42px}.heading{padding:48px 0 24px}.fields{grid-template-columns:1fr}.panel{padding:17px}.panel-head{align-items:flex-start}.submit-row{align-items:stretch;flex-direction:column}.submit-row button{width:100%}}@media print{ :global(html),:global(body){background:white!important;color:#111!important}.shell{max-width:none;padding:0}.top,.heading,form,footer,.print{display:none!important}.results{display:block!important;background:white;border:0;color:#111;padding:0}.results h2,.breakdown-row,.breakdown-row strong,details{color:#111}.total{color:#111}pre{color:#111;background:#f5f5f5} }
