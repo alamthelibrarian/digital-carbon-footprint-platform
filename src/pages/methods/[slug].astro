@@ -1,0 +1,86 @@
+---
+import { methods } from "../../lib/methods";
+
+export function getStaticPaths() {
+  return methods.map((method) => ({
+    params: { slug: method.slug },
+    props: { method },
+  }));
+}
+
+const { method } = Astro.props;
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content={method.summary} />
+    <meta name="theme-color" content="#151a19" />
+    <title>{method.name} · DCFP Method Library</title>
+  </head>
+  <body>
+    <main class="shell">
+      <header class="topbar">
+        <a class="brand" href="/">DCFP<span>.</span></a>
+        <a class="back" href="/methods/">Method library</a>
+      </header>
+      <section class="content">
+        <p class="eyebrow">METHOD PROFILE</p>
+        <p class:listed={method.status === "planned"} class="status">{method.statusLabel}</p>
+        <h1>{method.name}</h1>
+        <p class="lead">{method.summary}</p>
+        <div class="panel">
+          <h2>Intended role in DCFP</h2>
+          <p>{method.role}</p>
+        </div>
+        <div class="panel">
+          <h2>Current implementation status</h2>
+          <p>{method.implementationNote}</p>
+        </div>
+        <div class="panel">
+          <h2>Potential scope</h2>
+          <ul>{method.scope.map((item) => <li>{item}</li>)}</ul>
+        </div>
+        <div class="source">
+          <p class="eyebrow">SOURCE / REFERENCE</p>
+          <p>{method.source}</p>
+          <a href={method.sourceUrl} target="_blank" rel="noreferrer">Open source reference ↗</a>
+        </div>
+        {method.slug === "dpc-v1" && (
+          <p class="notice">DCFP is an independent software project. It is not an official DPC product and is not endorsed by the Digital Preservation Coalition. The DPC publication remains authoritative for its methodology.</p>
+        )}
+        <a class="back-link" href="/methods/">← Back to all methods</a>
+      </section>
+      <footer>Digital Carbon Footprint Platform · Open-source project in development</footer>
+    </main>
+  </body>
+</html>
+
+<style>
+  :global(*){box-sizing:border-box}
+  :global(html){background:#151a19;color:#e9eeeb;font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+  :global(body){margin:0}
+  .shell{max-width:900px;margin:auto;padding:32px 28px 48px}
+  .topbar{display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid #303936;padding-bottom:22px}
+  .brand{font-size:22px;font-weight:800;letter-spacing:-1px;color:#f2f5f3;text-decoration:none}
+  .brand span{color:#79b99b}
+  .back,.back-link{color:#a8cdb7;text-decoration:none;font-size:13px}
+  .content{padding:76px 0 30px;max-width:720px}
+  .eyebrow{font-size:10px;letter-spacing:1.5px;font-weight:700;color:#82c5a2}
+  .status{display:inline-block;border:1px solid #59645e;border-radius:20px;padding:7px 11px;color:#b6c1bb;font-size:11px}
+  .status.listed{border-color:#527d65;color:#91d0ad}
+  h1{font-size:clamp(36px,6vw,58px);line-height:1.08;letter-spacing:-2px;margin:20px 0}
+  .lead{font-size:18px;line-height:1.7;color:#aeb9b3}
+  .panel{border-top:1px solid #35403a;padding:22px 0}
+  h2{font-size:17px;margin:0 0 10px}
+  .panel p,.panel li,.source p{font-size:14px;line-height:1.8;color:#aeb9b3}
+  ul{padding-left:20px}
+  .source{margin-top:16px;padding:22px;background:#1c2420;border:1px solid #35403a;border-radius:12px}
+  .source a{color:#9bc9ae;font-size:13px;text-decoration:none}
+  .notice{border-left:2px solid #79b99b;padding:12px 16px;color:#9eaaa3;font-size:12px;line-height:1.7}
+  .back-link{display:inline-block;margin-top:25px}
+  footer{border-top:1px solid #303936;padding-top:20px;color:#89968f;font-size:12px}
+  @media(max-width:600px){.shell{padding:22px 18px}.content{padding-top:55px}}
+</style>
