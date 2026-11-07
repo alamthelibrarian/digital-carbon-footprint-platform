@@ -261,7 +261,7 @@
         requiredText("travelSource", "Travel emissions source");
         input.travel = [{
         description: value("travelDescription"), emissionsKgCO2e: number("travelKg"), source: value("travelSource"),
-        factorProvenance: { factor: "travel-emissions-calculation", value: number("travelKg"), unit: "kgCO2e/trip", source: value("travelSource"), geography: value("travelGeography") || null, referenceYear: value("travelYear") ? number("travelYear") : null }
+        factorProvenance: { factor: "travel-emissions-calculation", value: number("travelKg"), unit: "kgCO2e", source: value("travelSource"), geography: value("travelGeography") || null, referenceYear: value("travelYear") ? number("travelYear") : null }
         }];
       }
 
