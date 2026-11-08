@@ -27,6 +27,7 @@ test("adapts DPC result without changing native output or total", () => {
         value: 10,
         unit: "kgCO2e/year",
         source: "Provider report",
+        dataKind: "provider-reported",
       },
     }],
     travel: [{
@@ -46,6 +47,7 @@ test("adapts DPC result without changing native output or total", () => {
   assert.equal(envelope.results.metrics.length, 7);
   assert.equal(envelope.factorProvenance.length, 1);
   assert.equal(envelope.factorProvenance[0].location, "cloud[0]");
+  assert.equal(envelope.factorProvenance[0].provenance.dataKind, "provider-reported");
   assert.deepEqual(envelope.dataQuality.activityConfidence, ["cloud[0]: high"]);
   assert.equal("dataQuality" in envelope.factorProvenance[0].provenance, false);
   assert.equal(envelope.dataQuality.factorProvenanceCoverage, "partial");
