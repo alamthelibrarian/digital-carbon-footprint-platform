@@ -49,6 +49,7 @@ export interface DcfpResultEnvelope<
   factorProvenance: DcfpFactorProvenanceEntry<TProvenance>[];
   dataQuality: {
     activityConfidence: string[];
+    inputSources: string[];
     factorProvenanceCoverage: "none" | "partial" | "recorded";
   };
   assumptions: string[];
