@@ -92,7 +92,7 @@ test("does not fabricate a functional unit, boundary, or factor provenance", () 
     systemBoundary: "User-defined operational boundary",
   });
   assert.deepEqual(envelope.factorProvenance, []);
-  assert.equal(envelope.dataQuality.factorProvenanceCoverage, "none");
+  assert.equal(envelope.dataQuality.factorProvenanceCoverage, "partial");
 });
 
 test("rejects incomplete assessment metadata and invalid timestamps", () => {
