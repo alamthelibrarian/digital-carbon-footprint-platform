@@ -39,7 +39,9 @@ export interface DpcOnPremiseInput {
   gridFactorSource: string;
   source: string;
   confidence: DpcConfidence;
-  factorProvenance?: DpcFactorProvenance;
+  storageEnergySource?: string;
+  pueSource?: string;
+  factorProvenance?: DpcFactorProvenance | DpcFactorProvenance[];
   notes?: string;
 }
 
@@ -111,7 +113,7 @@ export interface DpcOnPremiseResult {
   gridFactorSource: string;
   source: string;
   confidence: DpcConfidence;
-  factorProvenance?: DpcFactorProvenance;
+  factorProvenance?: DpcFactorProvenance | DpcFactorProvenance[];
   notes?: string;
 }
 
@@ -200,6 +202,8 @@ function validateConfidence(confidence: DpcConfidence): void {
 
 const KNOWN_FACTOR_UNITS: Record<string, string> = {
   "electricity-grid": "kgCO2e/kWh",
+  "storage-energy-intensity": "Wh/TB/hour",
+  "power-usage-effectiveness": "ratio",
   "network-energy-intensity": "kWh/GB",
   "fixed-line-network-intensity": "kWh/GB",
   "mobile-network-intensity": "kWh/GB",
@@ -272,6 +276,8 @@ export function calculateOnPremiseRow(input: DpcOnPremiseInput): DpcOnPremiseRes
   validateConfidence(input.confidence);
   validateOptionalFactorProvenance(input.factorProvenance);
   assertProvenanceValueMatches(input.factorProvenance, "electricity-grid", input.gridFactorKgCO2ePerKWh);
+  assertProvenanceValueMatches(input.factorProvenance, "storage-energy-intensity", input.storageEnergyWhPerTBh);
+  assertProvenanceValueMatches(input.factorProvenance, "power-usage-effectiveness", input.pue);
 
   const serverPowerW = ((input.maxPowerW - input.idlePowerW) * input.meanUtilisation) + input.idlePowerW;
   const storagePowerW = input.storageCapacityTB * input.storageEnergyWhPerTBh;
