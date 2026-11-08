@@ -70,17 +70,18 @@ test("records full provenance coverage when every included row has provenance", 
       gridFactorSource: "Grid dataset",
       source: "Meter readings",
       confidence: "high",
-      factorProvenance: {
-        factor: "electricity-grid",
-        value: 0.4,
-        unit: "kgCO2e/kWh",
-        source: "Grid dataset",
-      },
+      storageEnergySource: "Storage study",
+      pueSource: "Facility report",
+      factorProvenance: [
+        { factor: "electricity-grid", value: 0.4, unit: "kgCO2e/kWh", source: "Grid dataset" },
+        { factor: "storage-energy-intensity", value: 0.5, unit: "Wh/TB/hour", source: "Storage study" },
+        { factor: "power-usage-effectiveness", value: 1.2, unit: "ratio", source: "Facility report" },
+      ],
     }],
   };
   const envelope = adaptDpcV1Result(input, calculateDpcV1(input), metadata);
   assert.equal(envelope.dataQuality.factorProvenanceCoverage, "recorded");
-  assert.equal(envelope.factorProvenance[0].location, "onPremise[0]");
+  assert.equal(envelope.factorProvenance[0].location, "onPremise[0][0]");
 });
 
 test("does not fabricate a functional unit, boundary, or factor provenance", () => {
@@ -107,7 +108,7 @@ test("rejects results from another method or version", () => {
   assert.throws(() => adaptDpcV1Result(input, { ...native, version: "2.0" }, metadata), /DPC Carbon Footprint Toolkit v1.0/);
 });
 
-test("does not overstate provenance coverage when one row has multiple factors", () => {
+test("does not overstate provenance coverage when one activity row omits factor sources", () => {
   const input = {
     networking: [
       {
@@ -194,4 +195,16 @@ test("does not count a row as provenance-covered when any factor source is missi
   const envelope = adaptDpcV1Result(input, calculateDpcV1(input), metadata);
   assert.equal(envelope.factorProvenance.length, 2);
   assert.equal(envelope.dataQuality.factorProvenanceCoverage, "none");
+});
+
+
+test("does not call on-premise provenance fully recorded when only the grid source is supplied", () => {
+  const input = { onPremise: [{
+    category: "bitstream-preservation", machineName: "Server", idlePowerW: 100, maxPowerW: 200,
+    meanUtilisation: 0.5, storageCapacityTB: 1, storageEnergyWhPerTBh: 0.5, pue: 1.2,
+    gridFactorKgCO2ePerKWh: 0.4, gridFactorSource: "Grid dataset", source: "Meter readings", confidence: "high",
+    factorProvenance: [{ factor: "electricity-grid", value: 0.4, unit: "kgCO2e/kWh", source: "Grid dataset" }],
+  }] };
+  const envelope = adaptDpcV1Result(input, calculateDpcV1(input), metadata);
+  assert.equal(envelope.dataQuality.factorProvenanceCoverage, "partial");
 });
