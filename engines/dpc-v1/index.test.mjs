@@ -553,6 +553,15 @@ test("Validates factor provenance metadata without changing calculation inputs",
     ...base,
     factorProvenance: { factor: "grid", unit: "kgCO2e/kWh", value: 0.4, source: "Dataset", referenceYear: 2025.5 },
   }), /referenceYear must be a positive integer/);
+  assert.throws(() => calculateOnPremiseRow({
+    ...base,
+    factorProvenance: { factor: "grid", unit: "kgCO2e/kWh", source: "Dataset", dataKind: "guessed" },
+  }), /factorProvenance.dataKind must be measured, provider-reported, secondary-literature, or proxy/);
+  const typed = calculateOnPremiseRow({
+    ...base,
+    factorProvenance: { factor: "electricity-grid", unit: "kgCO2e/kWh", source: "Dataset", dataKind: "proxy" },
+  });
+  assert.equal(typed.factorProvenance.dataKind, "proxy");
 
   const valid = calculateOnPremiseRow({
     ...base,
