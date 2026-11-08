@@ -8,7 +8,7 @@ The DPC v1.0 calculator presents a readable assessment report after a successful
 - Organization/unit, system boundary, functional unit, reporting period, geography, assessment ID, UTC creation timestamp, and method/version.
 - Native DPC total and category-level emissions.
 - Category contribution percentages calculated against the native DPC total. Percentages are omitted when the total is zero.
-- Factor-provenance entries captured by the result adapter.
+- Factor-provenance entries captured by the result adapter, including optional source-kind classification.
 - Structural factor-provenance coverage status.
 - Assumptions and method limitations.
 - A collapsible complete JSON calculation record.
