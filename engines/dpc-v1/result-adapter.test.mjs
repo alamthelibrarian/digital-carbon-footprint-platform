@@ -198,6 +198,21 @@ test("does not count a row as provenance-covered when any factor source is missi
 });
 
 
+test("duplicate or unrelated provenance entries cannot replace a missing expected factor", () => {
+  const input = { onPremise: [{
+    category: "bitstream-preservation", machineName: "Server", idlePowerW: 100, maxPowerW: 200,
+    meanUtilisation: 0.5, storageCapacityTB: 1, storageEnergyWhPerTBh: 0.5, pue: 1.2,
+    gridFactorKgCO2ePerKWh: 0.4, gridFactorSource: "Grid dataset", source: "Meter readings", confidence: "high",
+    factorProvenance: [
+      { factor: "electricity-grid", value: 0.4, unit: "kgCO2e/kWh", source: "Grid dataset" },
+      { factor: "electricity-grid", value: 0.4, unit: "kgCO2e/kWh", source: "Duplicate source" },
+      { factor: "unrelated-factor", value: 1, unit: "unit", source: "Unrelated source" },
+    ],
+  }] };
+  const envelope = adaptDpcV1Result(input, calculateDpcV1(input), metadata);
+  assert.equal(envelope.dataQuality.factorProvenanceCoverage, "partial");
+});
+
 test("does not call on-premise provenance fully recorded when only the grid source is supplied", () => {
   const input = { onPremise: [{
     category: "bitstream-preservation", machineName: "Server", idlePowerW: 100, maxPowerW: 200,
