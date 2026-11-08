@@ -143,7 +143,19 @@ test("does not overstate provenance coverage when one row has multiple factors",
   assert.equal(envelope.dataQuality.factorProvenanceCoverage, "partial");
 });
 
-test("flags website-use inputs when no separate input-source field exists", () => {
+test("records the website-use activity-data source separately from factor sources", () => {
+  const input = { websiteUse: {
+    averagePageSizeKB: 0, annualVisits: 0, averageDownloadSizeMB: 0, annualDownloads: 0,
+    fixedLineIntensityKWhPerGB: 0, mobileIntensityKWhPerGB: 0,
+    fixedLineIntensitySource: "Fixed study", mobileIntensitySource: "Mobile study",
+    meanGlobalGridFactorKgCO2ePerKWh: 0, gridFactorSource: "Grid dataset",
+    activitySource: "Web analytics export",
+  } };
+  const envelope = adaptDpcV1Result(input, calculateDpcV1(input), metadata);
+  assert.deepEqual(envelope.dataQuality.inputSources, ["websiteUse: Web analytics export"]);
+});
+
+test("identifies a missing website-use activity-data source without inventing one", () => {
   const input = { websiteUse: {
     averagePageSizeKB: 0, annualVisits: 0, averageDownloadSizeMB: 0, annualDownloads: 0,
     fixedLineIntensityKWhPerGB: 0, mobileIntensityKWhPerGB: 0,
@@ -151,9 +163,7 @@ test("flags website-use inputs when no separate input-source field exists", () =
     meanGlobalGridFactorKgCO2ePerKWh: 0, gridFactorSource: "Grid dataset",
   } };
   const envelope = adaptDpcV1Result(input, calculateDpcV1(input), metadata);
-  assert.deepEqual(envelope.dataQuality.inputSources, [
-    "websiteUse: no separate input-source field in the current DPC input model",
-  ]);
+  assert.deepEqual(envelope.dataQuality.inputSources, ["websiteUse: activity-data source not recorded"]);
 });
 
 test("preserves the supplied input snapshot in the envelope", () => {
