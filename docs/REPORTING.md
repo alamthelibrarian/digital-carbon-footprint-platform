@@ -40,7 +40,7 @@ Factor source kind (measured, provider-reported, secondary literature, or proxy)
 
 Displayed values are rounded to three decimal places for readability. This rounding is not an uncertainty estimate. The JSON record retains the underlying calculation values; their numeric precision must not be interpreted as evidence of measurement accuracy.
 
-Factor-provenance coverage is a structural indicator only. It checks whether recorded factor entries contain source text; it does not establish source authority, scientific quality, accuracy, geographic or temporal suitability, or independent verification. Emission-factor quality is not independently assessed by this preview.
+Factor-provenance coverage is a structural indicator only. It counts source-recorded factor entries against the factors expected by the current DPC input model (three for each on-premise row, one for each cloud row, two for each networking row, three for website use, and one for each travel row). It checks whether recorded factor entries contain source text; it does not establish source authority, scientific quality, accuracy, geographic or temporal suitability, or independent verification. Emission-factor quality is not independently assessed by this preview.
 
 The DPC v1.0 calculation formulas and native aggregation remain unchanged by the report layer. The report adapter and presentation layer must not silently alter method calculations or imply comparability with other methods.
 
