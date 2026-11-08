@@ -101,7 +101,7 @@ export function adaptDpcV1Result(
     ...result.cloud.map((row, index) => `cloud[${index}]: ${row.source}`),
     ...result.networking.map((row, index) => `networking[${index}]: ${row.source}`),
     ...result.travel.map((row, index) => `travel[${index}]: ${row.source}`),
-    ...(result.websiteUse ? ["websiteUse: no separate input-source field in the current DPC input model"] : []),
+    ...(input.websiteUse ? [`websiteUse: ${input.websiteUse.activitySource?.trim() || "activity-data source not recorded"}`] : []),
   ];
   const expectedProvenanceSlots = result.onPremise.length + result.cloud.length
     + result.networking.length + (result.websiteUse ? 1 : 0) + result.travel.length;
