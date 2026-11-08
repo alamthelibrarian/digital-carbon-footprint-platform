@@ -78,6 +78,7 @@ export interface DpcWebsiteUseInput {
   mobileIntensitySource: string;
   meanGlobalGridFactorKgCO2ePerKWh: number;
   gridFactorSource: string;
+  activitySource?: string;
   factorProvenance?: DpcFactorProvenance[];
 }
 
@@ -350,6 +351,7 @@ export function calculateWebsiteUse(input: DpcWebsiteUseInput) {
   requireText("fixedLineIntensitySource", input.fixedLineIntensitySource);
   requireText("mobileIntensitySource", input.mobileIntensitySource);
   requireText("gridFactorSource", input.gridFactorSource);
+  if (input.activitySource !== undefined) requireText("activitySource", input.activitySource);
   validateOptionalFactorProvenance(input.factorProvenance);
   assertProvenanceValueMatches(input.factorProvenance, "fixed-line-network-intensity", input.fixedLineIntensityKWhPerGB);
   assertProvenanceValueMatches(input.factorProvenance, "mobile-network-intensity", input.mobileIntensityKWhPerGB);
