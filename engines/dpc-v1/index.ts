@@ -14,6 +14,7 @@ export type DpcActivityCategory =
   | "discovery-access";
 
 export type DpcConfidence = "high" | "medium" | "low";
+export type DpcFactorDataKind = "measured" | "provider-reported" | "secondary-literature" | "proxy";
 
 export interface DpcFactorProvenance {
   factor: string;
@@ -22,6 +23,7 @@ export interface DpcFactorProvenance {
   source?: string | null;
   geography?: string | null;
   referenceYear?: number | null;
+  dataKind?: DpcFactorDataKind;
 }
 
 export interface DpcOnPremiseInput {
@@ -213,6 +215,9 @@ function validateFactorProvenance(entry: DpcFactorProvenance): void {
     throw new RangeError(`factorProvenance.unit for ${entry.factor} must be ${expectedUnit}.`);
   }
   if (entry.value !== undefined) requireNonNegative("factorProvenance.value", entry.value);
+  if (entry.dataKind !== undefined && !["measured", "provider-reported", "secondary-literature", "proxy"].includes(entry.dataKind)) {
+    throw new RangeError("factorProvenance.dataKind must be measured, provider-reported, secondary-literature, or proxy.");
+  }
   if (entry.source !== undefined && entry.source !== null) requireText("factorProvenance.source", entry.source);
   if (entry.geography !== undefined && entry.geography !== null) requireText("factorProvenance.geography", entry.geography);
   if (entry.referenceYear !== undefined && entry.referenceYear !== null) {
