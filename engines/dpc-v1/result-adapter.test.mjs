@@ -49,6 +49,7 @@ test("adapts DPC result without changing native output or total", () => {
   assert.equal(envelope.factorProvenance[0].location, "cloud[0]");
   assert.equal(envelope.factorProvenance[0].provenance.dataKind, "provider-reported");
   assert.deepEqual(envelope.dataQuality.activityConfidence, ["cloud[0]: high"]);
+  assert.deepEqual(envelope.dataQuality.inputSources, ["cloud[0]: Provider report", "travel[0]: Travel calculator"]);
   assert.equal("dataQuality" in envelope.factorProvenance[0].provenance, false);
   assert.equal(envelope.dataQuality.factorProvenanceCoverage, "partial");
   assert.equal(envelope.traceability.calculationTimestamp, metadata.createdAt);
@@ -140,6 +141,19 @@ test("does not overstate provenance coverage when one row has multiple factors",
   const envelope = adaptDpcV1Result(input, calculateDpcV1(input), metadata);
   assert.equal(envelope.factorProvenance.length, 2);
   assert.equal(envelope.dataQuality.factorProvenanceCoverage, "partial");
+});
+
+test("flags website-use inputs when no separate input-source field exists", () => {
+  const input = { websiteUse: {
+    averagePageSizeKB: 0, annualVisits: 0, averageDownloadSizeMB: 0, annualDownloads: 0,
+    fixedLineIntensityKWhPerGB: 0, mobileIntensityKWhPerGB: 0,
+    fixedLineIntensitySource: "Fixed study", mobileIntensitySource: "Mobile study",
+    meanGlobalGridFactorKgCO2ePerKWh: 0, gridFactorSource: "Grid dataset",
+  } };
+  const envelope = adaptDpcV1Result(input, calculateDpcV1(input), metadata);
+  assert.deepEqual(envelope.dataQuality.inputSources, [
+    "websiteUse: no separate input-source field in the current DPC input model",
+  ]);
 });
 
 test("preserves the supplied input snapshot in the envelope", () => {
