@@ -137,6 +137,7 @@
         <div class="report-meta" id="report-meta"></div>
         <section class="report-total"><p class="eyebrow">TOTAL ESTIMATED EMISSIONS</p><p id="total" class="total">—</p><span class="unit">kgCO₂e · DPC native aggregate</span><p class="quality-status">Displayed values are rounded to three decimal places for readability. Rounding is not an uncertainty estimate; the underlying calculation values remain in the JSON record.</p></section>
         <section class="report-section"><h3>Emissions by category</h3><p class="hint">Contribution is calculated against the native DPC total. Percentages are omitted when the total is zero.</p><div id="breakdown" class="breakdown"></div></section>
+        <section class="report-section"><h3>Input sources</h3><p class="quality-status">Sources are shown as entered for each input row. They are separate from emission-factor provenance and are not independently verified.</p><div id="input-sources" class="provenance-list"></div></section>
         <section class="report-section"><h3>Activity-data confidence</h3><p class="quality-status">Confidence levels below describe the activity data supplied for each calculation row. They are self-assessments and are not independent verification.</p><div id="activity-confidence" class="provenance-list"></div></section>
         <section class="report-section"><h3>Emission-factor provenance</h3><p id="provenance-status" class="quality-status"></p><div id="provenance" class="provenance-list"></div><p class="quality-status">Source type (measured, provider-reported, secondary literature, or proxy) is a user-supplied classification, not a quality score. Emission-factor quality is not independently assessed in this development preview. A recorded source does not establish its authority, geographic or temporal suitability, or scientific validity.</p></section>
         <section class="report-section"><h3>Assumptions</h3><ul id="assumptions" class="report-list"></ul></section>
@@ -328,6 +329,12 @@
         const bar = document.createElement("span"); bar.className = "bar-fill";
         bar.style.width = `${share === null ? 0 : Math.max(0, Math.min(100, share))}%`;
         track.append(bar); row.append(top, track); return row;
+      }));
+      const inputSources = document.querySelector<HTMLElement>("#input-sources")!;
+      inputSources.replaceChildren(...envelope.dataQuality.inputSources.map((source) => {
+        const item = document.createElement("div"); item.className = "provenance-item";
+        const detail = document.createElement("span"); detail.textContent = source;
+        item.append(detail); return item;
       }));
       const activityConfidence = document.querySelector<HTMLElement>("#activity-confidence")!;
       const confidenceEntries = envelope.dataQuality.activityConfidence;
