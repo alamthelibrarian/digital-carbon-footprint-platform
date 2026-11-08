@@ -48,6 +48,8 @@
             <label>PUE<input name="pue" type="number" min="0.000001" step="any" /></label>
             <label>Grid factor (kgCO₂e/kWh)<input name="gridFactorKgCO2ePerKWh" type="number" min="0" step="any" /></label>
             <label>Grid factor source<input name="gridFactorSource" /></label>
+            <label>Storage energy-intensity factor source<input name="storageEnergySource" placeholder="Source for Wh/TB/hour" /></label>
+            <label>PUE factor source<input name="pueSource" placeholder="Source for PUE" /></label>
             <label>Grid factor source type<select name="onFactorDataKind"><option value="">Not specified</option><option value="measured">Measured</option><option value="provider-reported">Provider-reported</option><option value="secondary-literature">Secondary literature</option><option value="proxy">Proxy</option></select></label>
             <label>Grid factor geography<input name="onFactorGeography" placeholder="Country / region / grid zone" /></label>
             <label>Grid factor reference year<input name="onFactorYear" type="number" min="1900" max="2100" placeholder="e.g. 2025" /></label>
@@ -216,9 +218,13 @@
         meanUtilisation: number("meanUtilisation"), storageCapacityTB: number("storageCapacityTB"),
         storageEnergyWhPerTBh: number("storageEnergyWhPerTBh"), pue: number("pue"),
         gridFactorKgCO2ePerKWh: number("gridFactorKgCO2ePerKWh"),
-        gridFactorSource: value("gridFactorSource"), source: value("onSource"),
+        gridFactorSource: value("gridFactorSource"), storageEnergySource: value("storageEnergySource"), pueSource: value("pueSource"), source: value("onSource"),
         confidence: value("onConfidence"),
-        factorProvenance: { factor: "electricity-grid", value: number("gridFactorKgCO2ePerKWh"), unit: "kgCO2e/kWh", source: value("gridFactorSource"), geography: value("onFactorGeography") || null, referenceYear: value("onFactorYear") ? number("onFactorYear") : null, ...(value("onFactorDataKind") ? { dataKind: value("onFactorDataKind") } : {}) }
+        factorProvenance: [
+          { factor: "electricity-grid", value: number("gridFactorKgCO2ePerKWh"), unit: "kgCO2e/kWh", source: value("gridFactorSource"), geography: value("onFactorGeography") || null, referenceYear: value("onFactorYear") ? number("onFactorYear") : null, ...(value("onFactorDataKind") ? { dataKind: value("onFactorDataKind") } : {}) },
+          { factor: "storage-energy-intensity", value: number("storageEnergyWhPerTBh"), unit: "Wh/TB/hour", source: value("storageEnergySource") || null },
+          { factor: "power-usage-effectiveness", value: number("pue"), unit: "ratio", source: value("pueSource") || null }
+        ]
         }];
       }
       if (enabled("cloudEnabled")) {
