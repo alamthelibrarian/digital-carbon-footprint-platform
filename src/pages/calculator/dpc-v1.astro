@@ -101,6 +101,7 @@
             <label>Annual visits<input name="annualVisits" type="number" min="0" step="any" /></label>
             <label>Average download size (MB)<input name="downloadSizeMB" type="number" min="0" step="any" /></label>
             <label>Annual downloads<input name="annualDownloads" type="number" min="0" step="any" /></label>
+            <label>Website activity-data source<input name="websiteActivitySource" placeholder="Analytics export / server logs / estimate" /></label>
             <label>Fixed-line intensity (kWh/GB)<input name="fixedIntensity" type="number" min="0" step="any" /></label>
             <label>Mobile intensity (kWh/GB)<input name="mobileIntensity" type="number" min="0" step="any" /></label>
             <label>Fixed-line factor source<input name="fixedSource" /></label>
@@ -260,6 +261,7 @@
         fixedLineIntensityKWhPerGB: number("fixedIntensity"), mobileIntensityKWhPerGB: number("mobileIntensity"),
         fixedLineIntensitySource: value("fixedSource"), mobileIntensitySource: value("mobileSource"),
         meanGlobalGridFactorKgCO2ePerKWh: number("websiteGridFactor"), gridFactorSource: value("websiteGridSource"),
+        ...(value("websiteActivitySource") ? { activitySource: value("websiteActivitySource") } : {}),
         factorProvenance: [
           { factor: "fixed-line-network-intensity", value: number("fixedIntensity"), unit: "kWh/GB", source: value("fixedSource"), geography: value("websiteFactorGeography") || null, referenceYear: value("websiteFactorYear") ? number("websiteFactorYear") : null, ...(value("fixedDataKind") ? { dataKind: value("fixedDataKind") } : {}) },
           { factor: "mobile-network-intensity", value: number("mobileIntensity"), unit: "kWh/GB", source: value("mobileSource"), geography: value("websiteFactorGeography") || null, referenceYear: value("websiteFactorYear") ? number("websiteFactorYear") : null, ...(value("mobileDataKind") ? { dataKind: value("mobileDataKind") } : {}) },
