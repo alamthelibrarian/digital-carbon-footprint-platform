@@ -70,26 +70,44 @@ export function adaptDpcV1Result(
   }
 
   const factorProvenance: DcfpFactorProvenanceEntry<DpcFactorProvenance>[] = [];
-  let coveredProvenanceFactors = 0;
+  const expectedFactorKeys = new Set<string>();
+  const coveredFactorKeys = new Set<string>();
   const hasSource = (item: DpcFactorProvenance): boolean =>
     typeof item.source === "string" && item.source.trim().length > 0;
-  const add = (location: string, value?: DpcFactorProvenance | DpcFactorProvenance[]) => {
-    if (Array.isArray(value) && value.length > 0) {
-      coveredProvenanceFactors += value.filter(hasSource).length;
-      value.forEach((item, index) => factorProvenance.push({
-        location: `${location}[${index}]`, provenance: item,
-      }));
-    } else if (value !== undefined && !Array.isArray(value)) {
-      if (hasSource(value)) coveredProvenanceFactors += 1;
-      factorProvenance.push({ location, provenance: value });
-    }
+  const add = (
+    location: string,
+    value: DpcFactorProvenance | DpcFactorProvenance[] | undefined,
+    expectedFactors: string[],
+  ) => {
+    expectedFactors.forEach((factor) => expectedFactorKeys.add(`${location}:${factor}`));
+    const entries = Array.isArray(value) ? value : value ? [value] : [];
+    entries.forEach((item, index) => {
+      factorProvenance.push({
+        location: Array.isArray(value) ? `${location}[${index}]` : location,
+        provenance: item,
+      });
+      if (expectedFactors.includes(item.factor) && hasSource(item)) {
+        coveredFactorKeys.add(`${location}:${item.factor}`);
+      }
+    });
   };
 
-  result.onPremise.forEach((row, index) => add(`onPremise[${index}]`, row.factorProvenance));
-  result.cloud.forEach((row, index) => add(`cloud[${index}]`, row.factorProvenance));
-  result.networking.forEach((row, index) => add(`networking[${index}]`, row.factorProvenance));
-  if (result.websiteUse) add("websiteUse", result.websiteUse.factorProvenance);
-  result.travel.forEach((row, index) => add(`travel[${index}]`, row.factorProvenance));
+  result.onPremise.forEach((row, index) => add(`onPremise[${index}]`, row.factorProvenance, [
+    "electricity-grid", "storage-energy-intensity", "power-usage-effectiveness",
+  ]));
+  result.cloud.forEach((row, index) => add(`cloud[${index}]`, row.factorProvenance, [
+    "provider-reported-emissions",
+  ]));
+  result.networking.forEach((row, index) => add(`networking[${index}]`, row.factorProvenance, [
+    "electricity-grid", "network-energy-intensity",
+  ]));
+  if (result.websiteUse) add("websiteUse", result.websiteUse.factorProvenance, [
+    "fixed-line-network-intensity", "mobile-network-intensity", "mean-global-grid",
+  ]);
+  result.travel.forEach((row, index) => add(`travel[${index}]`, row.factorProvenance, [
+    "travel-emissions-calculation",
+  ]));
+
 
   const activityConfidence = [
     ...result.onPremise.map((row, index) => `onPremise[${index}]: ${row.confidence}`),
@@ -103,13 +121,11 @@ export function adaptDpcV1Result(
     ...result.travel.map((row, index) => `travel[${index}]: ${row.source}`),
     ...(input.websiteUse ? [`websiteUse: ${input.websiteUse.activitySource?.trim() || "activity-data source not recorded"}`] : []),
   ];
-  // Count each factor input, not merely each activity row. On-premise uses
-  // three separately sourced factors; networking uses two; website use uses three.
-  const expectedProvenanceFactors = (result.onPremise.length * 3) + result.cloud.length
-    + (result.networking.length * 2) + (result.websiteUse ? 3 : 0) + result.travel.length;
-  const factorProvenanceCoverage = coveredProvenanceFactors === 0
+  // Coverage is matched by expected factor identity per row. Duplicate or
+  // unrelated entries cannot compensate for a missing expected factor.
+  const factorProvenanceCoverage = coveredFactorKeys.size === 0
     ? "none"
-    : coveredProvenanceFactors >= expectedProvenanceFactors ? "recorded" : "partial";
+    : coveredFactorKeys.size === expectedFactorKeys.size ? "recorded" : "partial";
 
   const totals = result.totals;
   const metrics: DcfpMetric[] = [
