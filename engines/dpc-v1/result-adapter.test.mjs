@@ -23,7 +23,7 @@ test("adapts DPC result without changing native output or total", () => {
       source: "Provider report",
       confidence: "high",
       factorProvenance: {
-        factor: "provider-cloud-emissions",
+        factor: "provider-reported-emissions",
         value: 10,
         unit: "kgCO2e/year",
         source: "Provider report",
