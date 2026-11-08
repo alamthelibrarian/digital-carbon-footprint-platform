@@ -92,7 +92,7 @@ test("does not fabricate a functional unit, boundary, or factor provenance", () 
     systemBoundary: "User-defined operational boundary",
   });
   assert.deepEqual(envelope.factorProvenance, []);
-  assert.equal(envelope.dataQuality.factorProvenanceCoverage, "partial");
+  assert.equal(envelope.dataQuality.factorProvenanceCoverage, "none");
 });
 
 test("rejects incomplete assessment metadata and invalid timestamps", () => {
@@ -194,7 +194,7 @@ test("does not count a row as provenance-covered when any factor source is missi
   };
   const envelope = adaptDpcV1Result(input, calculateDpcV1(input), metadata);
   assert.equal(envelope.factorProvenance.length, 2);
-  assert.equal(envelope.dataQuality.factorProvenanceCoverage, "none");
+  assert.equal(envelope.dataQuality.factorProvenanceCoverage, "partial");
 });
 
 
