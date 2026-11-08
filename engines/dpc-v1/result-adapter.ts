@@ -70,17 +70,17 @@ export function adaptDpcV1Result(
   }
 
   const factorProvenance: DcfpFactorProvenanceEntry<DpcFactorProvenance>[] = [];
-  let coveredProvenanceSlots = 0;
+  let coveredProvenanceFactors = 0;
   const hasSource = (item: DpcFactorProvenance): boolean =>
     typeof item.source === "string" && item.source.trim().length > 0;
   const add = (location: string, value?: DpcFactorProvenance | DpcFactorProvenance[]) => {
     if (Array.isArray(value) && value.length > 0) {
-      if (value.every(hasSource)) coveredProvenanceSlots += 1;
+      coveredProvenanceFactors += value.filter(hasSource).length;
       value.forEach((item, index) => factorProvenance.push({
         location: `${location}[${index}]`, provenance: item,
       }));
     } else if (value !== undefined && !Array.isArray(value)) {
-      if (hasSource(value)) coveredProvenanceSlots += 1;
+      if (hasSource(value)) coveredProvenanceFactors += 1;
       factorProvenance.push({ location, provenance: value });
     }
   };
@@ -103,11 +103,13 @@ export function adaptDpcV1Result(
     ...result.travel.map((row, index) => `travel[${index}]: ${row.source}`),
     ...(input.websiteUse ? [`websiteUse: ${input.websiteUse.activitySource?.trim() || "activity-data source not recorded"}`] : []),
   ];
-  const expectedProvenanceSlots = result.onPremise.length + result.cloud.length
-    + result.networking.length + (result.websiteUse ? 1 : 0) + result.travel.length;
-  const factorProvenanceCoverage = coveredProvenanceSlots === 0
+  // Count each factor input, not merely each activity row. On-premise uses
+  // three separately sourced factors; networking uses two; website use uses three.
+  const expectedProvenanceFactors = (result.onPremise.length * 3) + result.cloud.length
+    + (result.networking.length * 2) + (result.websiteUse ? 3 : 0) + result.travel.length;
+  const factorProvenanceCoverage = coveredProvenanceFactors === 0
     ? "none"
-    : coveredProvenanceSlots >= expectedProvenanceSlots ? "recorded" : "partial";
+    : coveredProvenanceFactors >= expectedProvenanceFactors ? "recorded" : "partial";
 
   const totals = result.totals;
   const metrics: DcfpMetric[] = [
