@@ -210,6 +210,8 @@
       if (enabled("onEnabled")) {
         requiredText("machineName", "Machine / equipment name");
         requiredText("gridFactorSource", "On-premise grid factor source");
+        requiredText("storageEnergySource", "Storage energy-intensity factor source");
+        requiredText("pueSource", "PUE factor source");
         requiredText("onSource", "On-premise activity data source");
         requiredText("onConfidence", "On-premise data confidence");
         input.onPremise = [{
@@ -401,7 +403,8 @@
     link.href = url;
     link.download = safeName + "-dpc-v1-results.json";
     link.click();
-    URL.revokeObjectURL(url);
+    // Keep the object URL alive long enough for the browser to start the download.
+    window.setTimeout(() => URL.revokeObjectURL(url), 1000);
   });
   document.querySelector<HTMLButtonElement>("#print")!.addEventListener("click", () => window.print());
 </script>
