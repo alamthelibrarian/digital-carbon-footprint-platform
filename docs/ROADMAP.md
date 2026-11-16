@@ -7,7 +7,7 @@ The roadmap is directional. A method is not considered implemented until its cal
 - [x] Establish public repository and project identity
 - [x] Document architecture and method-isolation principles
 - [x] Add automated checks and contribution guidance
-- [ ] Establish versioning and release policy
+- [x] Establish versioning and release policy (see `docs/RELEASE-POLICY.md`)
 
 ## Phase 1 — DPC v1.0
 
