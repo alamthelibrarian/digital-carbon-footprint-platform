@@ -42,6 +42,7 @@ Results from different methodologies are not automatically comparable. Any compa
 - [Assessment report and export guide](./docs/REPORTING.md)
 - [DPC v1.0 result adapter](./engines/dpc-v1/result-adapter.ts)
 - [Development roadmap](./docs/ROADMAP.md)
+- [Release and versioning policy](./docs/RELEASE-POLICY.md)
 
 The method-neutral result contract is implemented as a wrapper for DPC v1.0. The native DPC result remains intact and authoritative; the adapter standardises assessment metadata, metrics, provenance, assumptions, limitations, and traceability.
 
